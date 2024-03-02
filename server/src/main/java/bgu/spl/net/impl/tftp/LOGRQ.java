@@ -1,6 +1,5 @@
 package bgu.spl.net.impl.tftp;
 
-import java.io.Serializable;
 
 import bgu.spl.net.impl.rci.Command;
 

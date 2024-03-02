@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import bgu.spl.net.api.MessageEncoderDecoder;
 
-public class TftpEncoderDecoder implements MessageEncoderDecoder<byte[]> {
+public class TftpClientEncoderDecoder implements MessageEncoderDecoder<byte[]> {
     //TODO: Implement here the TFTP encoder and decoder
 
     private byte[] bytes = new byte[1 << 10]; //start with 1k
@@ -42,7 +42,12 @@ public class TftpEncoderDecoder implements MessageEncoderDecoder<byte[]> {
     @Override
     public byte[] encode(byte[] message) {
         //TODO: implement this
-        return message;
+        byte[] res = new byte[message.length + 1];
+        for (int i = 0; i < message.length; i++) {
+            res[i] = message[i];
+        }
+        res[res.length - 1] = 0;
+        return res;
     }
     
     private void pushByte(byte nextByte) {
