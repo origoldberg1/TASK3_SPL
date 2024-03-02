@@ -46,7 +46,6 @@ public abstract class BaseServer<T> implements Server<T> {
                         connections,
                         encdecFactory.get(),
                         protocolFactory.get());
-
                 execute(handler);
             }
         } catch (IOException ex) {

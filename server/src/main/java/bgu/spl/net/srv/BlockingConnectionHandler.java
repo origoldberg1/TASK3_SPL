@@ -18,12 +18,16 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     private BufferedOutputStream out;
     private volatile boolean connected = true;
     static volatile int connectionCounter = 0;
+    private volatile int id; //we add this
+    private volatile String userName;
 
     public BlockingConnectionHandler(Socket sock, Connections<T> connections, MessageEncoderDecoder<T> reader, MessagingProtocol<T> protocol) {
         this.sock = sock;
         this.connections = connections;
         this.encdec = reader;
         this.protocol = protocol;
+        this.id=connectionCounter; //make sure with ori it is ok to increase connectionCounter just in run method
+        this.userName=null;
     }
 
     @Override
@@ -63,4 +67,30 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     public void send(T msg) {
         //IMPLEMENT IF NEEDED
     }
+
+    public Connections getConnections() //we add this method
+    {
+        return connections;
+    }
+
+    public int id() //we add this method
+    {
+        return id;
+    }
+
+    public String getName() //we add this method
+    {
+        return this.userName;
+    }
+
+    public String setName(String userName) //we add this method
+    {
+        return this.userName=userName;
+    }
+
+    public int getId() //we add this method
+    {
+        return this.id;
+    }
 }
+

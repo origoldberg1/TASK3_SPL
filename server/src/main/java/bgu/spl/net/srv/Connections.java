@@ -4,9 +4,11 @@ import java.io.IOException;
 
 public interface Connections<T> {
 
-    void connect(int connectionId, ConnectionHandler<T> handler);
+    boolean connect(int connectionId, BlockingConnectionHandler<T> handler);
 
     boolean send(int connectionId, T msg);
 
-    void disconnect(int connectionId);
+    boolean disconnect(int connectionId);
+
+    boolean isExist(String userName); //we add this method
 }
