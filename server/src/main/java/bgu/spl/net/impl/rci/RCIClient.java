@@ -22,7 +22,7 @@ public class RCIClient implements Closeable {
     }
 
     public void send(Command<?> cmd) throws IOException {
-        out.write(encdec.encode(cmd));
+     //   out.write(encdec.encode(cmd));
         out.flush();
     }
 

@@ -2,6 +2,7 @@ package bgu.spl.net.srv;
 
 import bgu.spl.net.api.MessageEncoderDecoder;
 import bgu.spl.net.api.MessagingProtocol;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -12,19 +13,24 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     private final MessagingProtocol<T> protocol;
     private final MessageEncoderDecoder<T> encdec;
     private final Socket sock;
+    private final Connections<T> connections;
     private BufferedInputStream in;
     private BufferedOutputStream out;
     private volatile boolean connected = true;
+    static volatile int connectionCounter = 0;
 
-    public BlockingConnectionHandler(Socket sock, MessageEncoderDecoder<T> reader, MessagingProtocol<T> protocol) {
+    public BlockingConnectionHandler(Socket sock, Connections<T> connections, MessageEncoderDecoder<T> reader, MessagingProtocol<T> protocol) {
         this.sock = sock;
+        this.connections = connections;
         this.encdec = reader;
         this.protocol = protocol;
     }
 
     @Override
     public void run() {
-        try (Socket sock = this.sock) { //just for automatic closing
+        try (Socket sock = this.sock) {
+            this.protocol.start(connectionCounter, connections, this); //just for automatic closing
+            connectionCounter ++;
             int read;
 
             in = new BufferedInputStream(sock.getInputStream());
@@ -41,7 +47,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
                 }
             }
 
-        } catch (IOException ex) {
+        } catch (IOException ex) { 
             ex.printStackTrace();
         }
 

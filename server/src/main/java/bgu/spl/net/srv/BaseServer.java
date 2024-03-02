@@ -2,6 +2,8 @@ package bgu.spl.net.srv;
 
 import bgu.spl.net.api.MessageEncoderDecoder;
 import bgu.spl.net.api.MessagingProtocol;
+import bgu.spl.net.impl.tftp.TftpConnections;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -28,6 +30,8 @@ public abstract class BaseServer<T> implements Server<T> {
     @Override
     public void serve() {
 
+        Connections<T> connections = (Connections<T>)new TftpConnections();
+
         try (ServerSocket serverSock = new ServerSocket(port)) {
 			System.out.println("Server started");
 
@@ -39,6 +43,7 @@ public abstract class BaseServer<T> implements Server<T> {
 
                 BlockingConnectionHandler<T> handler = new BlockingConnectionHandler<>(
                         clientSock,
+                        connections,
                         encdecFactory.get(),
                         protocolFactory.get());
 
