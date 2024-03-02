@@ -1,6 +1,5 @@
 package bgu.spl.net.impl.tftp;
 
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import bgu.spl.net.srv.ConnectionHandler;
