@@ -9,7 +9,8 @@ public class WRQ implements Command<byte[]> {
     @Override
     public byte[] execute(byte[] arg) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'execute'");
+       System.out.println("length of msg = " + arg.length);
+       return new byte[] {0, 4, 0, 0};
     }
     
 }

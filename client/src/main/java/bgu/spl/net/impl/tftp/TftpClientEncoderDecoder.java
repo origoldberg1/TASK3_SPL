@@ -17,17 +17,17 @@ public class TftpClientEncoderDecoder implements MessageEncoderDecoder<byte[]> {
         if(len >= 2){
             switch (bytes[1]) {
                 case 1: case 2: case 7: case 8:
-                    if(decodeNextByteUntilZero(nextByte)) {return bytes;}
+                    if(decodeNextByteUntilZero(nextByte)) {return trim(bytes);}
                 case 3:
-                    if(decodeNextByteKnownPacketLength(nextByte, 6)) {return bytes;}
+                    if(decodeNextByteKnownPacketLength(nextByte, 6)) {return trim(bytes);}
                 case 4:
-                    if(decodeNextByteFixedSize(nextByte, 4)) {return bytes;}
+                    if(decodeNextByteFixedSize(nextByte, 4)) {return trim(bytes);}
                 case 5:
-                    if(decodeNextByteError(nextByte)) {return bytes;}
+                    if(decodeNextByteError(nextByte)) {return trim(bytes);}
                 case 6: case 10:
-                    return bytes; //will cause an error due to len = 2 always?
+                    return trim(bytes); //will cause an error due to len = 2 always?
                  case 9:
-                 if(decodeNextByteBcast(nextByte)) {return bytes;}
+                 if(decodeNextByteBcast(nextByte)) {return trim(bytes);}
                 default:
                     break;
             }
@@ -42,12 +42,7 @@ public class TftpClientEncoderDecoder implements MessageEncoderDecoder<byte[]> {
     @Override
     public byte[] encode(byte[] message) {
         //TODO: implement this
-        byte[] res = new byte[message.length + 1];
-        for (int i = 0; i < message.length; i++) {
-            res[i] = message[i];
-        }
-        res[res.length - 1] = 0;
-        return res;
+        return message;
     }
     
     private void pushByte(byte nextByte) {
@@ -86,6 +81,14 @@ public class TftpClientEncoderDecoder implements MessageEncoderDecoder<byte[]> {
         if(len >= 4 && nextByte == 0) {return true;}
         pushByte(nextByte);
         return false;
+    }
+
+    private byte[] trim(byte[] bytes){
+        byte[] res = new byte[len];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = bytes[i];
+        }
+        return res;
     }
 
 }
