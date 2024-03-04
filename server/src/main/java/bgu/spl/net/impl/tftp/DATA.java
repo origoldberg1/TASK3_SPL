@@ -7,15 +7,11 @@ import java.io.IOException;
 public class DATA implements Command<byte[]> {
 
     @Override
-    public byte[] execute(byte[] packet, BlockingConnectionHandler <byte[]> handler) 
+    public void execute(byte[] packet, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject) 
     {
-        if(handler.getName()==null) //isn't logged in
-        {
-            return new ERROR(6).getError();
-        }
         if(handler.getFileToWritePath()==null) //trying to write without sending WRQ request at first
         {
-            return new ERROR(2).getError();
+            connectionsObject.send(handler.getId() ,new ERROR(2).getError());
         }
         try (FileOutputStream fos = new FileOutputStream(handler.getFileToWritePath())) 
         {
@@ -29,9 +25,10 @@ public class DATA implements Command<byte[]> {
             {
                 handler.setFileToWritePath(null);
             }
-            return new ACK(new byte[]{packet[4],packet[5]}).getAck();
+            byte [] ackMsg=new ACK(new byte[]{packet[4],packet[5]}).getAck();
+            connectionsObject.send(handler.getId(),ackMsg);
         } 
-        catch (IOException e) {return new ERROR(2).getError();} //someone deleted the file so we can't write into anymore 
+        catch (IOException e) {connectionsObject.send(handler.getId(), new ERROR(2).getError());} //someone deleted the file so we can't write into anymore 
     }
 }
 

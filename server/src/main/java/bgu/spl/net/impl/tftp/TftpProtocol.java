@@ -1,54 +1,57 @@
 package bgu.spl.net.impl.tftp;
-import java.net.Socket;
 import bgu.spl.net.api.BidiMessagingProtocol;
 import bgu.spl.net.srv.BlockingConnectionHandler;
-import bgu.spl.net.srv.Connections;
 
 public class TftpProtocol implements BidiMessagingProtocol<byte[]>  {
 
     boolean shouldTerminate = false;
     private BlockingConnectionHandler <byte[]> handler;
-    private TftpConnections connecntions;
-    private int connectionId;
-    
+    private TftpConnections connectionsObj;    
 
     
     @Override
-    public void start(int connectionId, Connections<byte[]> connections, BlockingConnectionHandler <byte[]>  connectionHandler) {
+    public void start(int connectionId, TftpConnections connectionsObj, BlockingConnectionHandler <byte[]>  connectionHandler) {
         // TODO implement this
         this.handler=connectionHandler;
-        this.connecntions=connecntions;
-        this.connectionId=handler.getId();
+        this.connectionsObj=connectionsObj;
         System.out.println("start");
         //throw new UnsupportedOperationException("Unimplemented method 'start'");
 
     }
 
     @Override
-    public byte[] process(byte[] message) {
+    public void process(byte[] message) {
         // TODO implement this
         System.out.println("process");
         if(message.length > 1){
-            switch (message[1]) {
-                case 1:
-                    return new RRQ().execute(message, handler);
-                case 2:
-                    return new WRQ().execute(message, handler);
-                case 3:
-                    return new DATA().execute(message, handler);                    
-                case 6:
-                    return new DIRQ().execute(message, handler);
-                case 7:
-                    return new LOGRQ().execute(message, handler);
-                case 8:
-                    return new DELRQ().execute(message, handler);
-                case 10:
-                    return new DISC().execute(message, handler);
-                default:
-                    return new ERROR (4).getError();
+            if(message[1]!=7 && handler.getName()==null)
+            {
+                connectionsObj.send(handler.getId(), new ERROR(6).getError());
+            }
+            else
+            {
+                switch (message[1]) 
+                {
+                    case 1:
+                        new RRQ().execute(message, handler, connectionsObj);
+                    case 2:
+                        new WRQ().execute(message, handler, connectionsObj);
+                    case 3:
+                        new DATA().execute(message, handler, connectionsObj);                    
+                    case 6:
+                        new DIRQ().execute(message, handler, connectionsObj);
+                    case 7:
+                        new LOGRQ().execute(message, handler, connectionsObj);
+                    case 8:
+                        new DELRQ().execute(message, handler, connectionsObj);
+                    case 10:
+                        new DISC().execute(message, handler, connectionsObj);
+                    default:
+                        connectionsObj.send(handler.getId(),new ERROR (4).getError());
+                }
             }
         }
-        return new ERROR (4).getError();   
+        connectionsObj.send(handler.getId(),new ERROR (4).getError()); 
         //throw new UnsupportedOperationException("Unimplemented method 'process'");
     }
 

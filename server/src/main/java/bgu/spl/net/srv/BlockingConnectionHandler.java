@@ -2,6 +2,7 @@ package bgu.spl.net.srv;
 
 import bgu.spl.net.api.MessageEncoderDecoder;
 import bgu.spl.net.api.MessagingProtocol;
+import bgu.spl.net.impl.tftp.TftpConnections;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -13,7 +14,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     private final MessagingProtocol<T> protocol;
     private final MessageEncoderDecoder<T> encdec;
     private final Socket sock;
-    private final Connections<T> connections;
+    private final TftpConnections connections;
     private BufferedInputStream in;
     private BufferedOutputStream out;
     private volatile boolean connected = true;
@@ -22,7 +23,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     private volatile String userName; //we add this
     private volatile String fileToWritePath; //we add it
 
-    public BlockingConnectionHandler(Socket sock, Connections<T> connections, MessageEncoderDecoder<T> reader, MessagingProtocol<T> protocol) {
+    public BlockingConnectionHandler(Socket sock, TftpConnections connections, MessageEncoderDecoder<T> reader, MessagingProtocol<T> protocol) {
         this.sock = sock;
         this.connections = connections;
         this.encdec = reader;
@@ -41,16 +42,16 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
             int read;
 
             in = new BufferedInputStream(sock.getInputStream());
-            out = new BufferedOutputStream(sock.getOutputStream());
+            // out = new BufferedOutputStream(sock.getOutputStream());
 
             while (!protocol.shouldTerminate() && connected && (read = in.read()) >= 0) {
                 T nextMessage = encdec.decodeNextByte((byte) read);
-                if (nextMessage != null) {
-                    T response = protocol.process(nextMessage);
-                    if (response != null) { //means we got al packet from encdec?
-                        out.write(encdec.encode(response));
-                        out.flush();
-                    }
+                if (nextMessage != null) { //full packet acccepted
+                    protocol.process(nextMessage);
+                    // if (response != null) { //means we got al packet from encdec?
+                    //     out.write(encdec.encode(response));
+                    //     out.flush();
+                    // }
                 }
             }
 
@@ -67,10 +68,15 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     }
 
     @Override
-    public  void send(T msg) { //implement if needed
+    public synchronized void send(T msg) { //implement if needed
+        try{
+        out = new BufferedOutputStream(sock.getOutputStream());
+        out.write(encdec.encode(msg));
+        out.flush();
+        }catch(IOException e){}
     }
 
-    public Connections getConnectionsObject() //we add this method
+    public TftpConnections getConnectionsObject() //we add this method
     {
         return connections;
     }

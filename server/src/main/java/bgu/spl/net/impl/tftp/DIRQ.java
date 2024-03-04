@@ -8,12 +8,8 @@ import bgu.spl.net.srv.BlockingConnectionHandler;
 public class DIRQ implements Command<byte[]> {
 
     @Override
-    public byte[] execute(byte[] arge, BlockingConnectionHandler <byte[]> handler) 
+    public void execute(byte[] arg, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject) 
     {
-        if(handler.getName()==null)
-        {
-            return new ERROR(6).getError();
-        }
         File folder = new File("server/Flies");
         File[] files = folder.listFiles();
         //creating list with file names in byte (0 byte between each of them)
@@ -35,8 +31,8 @@ public class DIRQ implements Command<byte[]> {
             data[i] = b;
             i++;
         }
-        //returning date bytes arr
-        return data;
+        //TODO creating the data to send
+        connectionsObject.send(handler.getId(), data);
     }
     
 }
