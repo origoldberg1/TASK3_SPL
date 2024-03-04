@@ -1,8 +1,5 @@
 package bgu.spl.net.impl.tftp;
-
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
-
 import bgu.spl.net.srv.BlockingConnectionHandler;
 import bgu.spl.net.srv.ConnectionHandler;
 import bgu.spl.net.srv.Connections;
@@ -36,7 +33,7 @@ public class TftpConnections implements Connections<byte[]>{
         return true;
     }
 
-    public boolean isExist(String userName)
+    public boolean isExist(String userName) //we add this method in order to check if this userName is already connected
     {
         for(int i=1; i<=connections.size(); i++)
         {
@@ -47,4 +44,17 @@ public class TftpConnections implements Connections<byte[]>{
         }
         return true;
     }
+
+    public void bcast(byte [] fileName, byte deletedOrAdded) //deleteOrAdded hold (byte)0x00 if the file was deleted, otherwise (byte)0x01
+    {
+        byte [] bcastMsg= new BCAST(fileName,deletedOrAdded).getBcast();
+        for(int i=0; i<connections.size(); i++)
+        {
+            if(connections.get(i).getName()!=null) //means this CH is logged in
+            {
+                connections.get(i).send(bcastMsg);
+            }
+        }
+    }
+
 }

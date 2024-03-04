@@ -8,5 +8,5 @@ import bgu.spl.net.srv.Connections;
 
 public interface Command<T>{
 
-    byte[] execute(T arg, T error, BlockingConnectionHandler<byte[]> handler);
+    byte[] execute(T arg, BlockingConnectionHandler<byte[]> handler);
 }

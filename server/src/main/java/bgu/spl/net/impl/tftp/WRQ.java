@@ -1,7 +1,4 @@
 package bgu.spl.net.impl.tftp;
-
-import java.io.IOException;
-import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,13 +6,17 @@ import java.nio.file.Paths;
 
 import bgu.spl.net.impl.rci.Command;
 import bgu.spl.net.srv.BlockingConnectionHandler;
+import bgu.spl.net.srv.Connections;
 
 public class WRQ implements Command<byte[]> 
 {
     @Override
-    public byte[] execute(byte[] arg, byte[] error, BlockingConnectionHandler handler) 
+    public byte[] execute(byte[] arg, BlockingConnectionHandler <byte []> handler) 
     {
-        byte[] ack={(byte)0x00, (byte)0x09, (byte)0x00, (byte)0x00};
+        if(handler.getName()==null)
+        {
+            return new ERROR(6).getError();
+        }
         byte [] bytesFileName= new byte[arg.length-2];//acording ori we get args withoud the last byte 
         for(int i=2; i<arg.length-2; i++)
         {
@@ -25,9 +26,11 @@ public class WRQ implements Command<byte[]>
         Path filePath = Paths.get("server/Files/"+fileName+".txt"); 
         if(Files.exists(filePath))
         {
-            return ack;
+            Connections connections= handler.getConnections();
+            connections.bcast(bytesFileName, (byte)0x01);
+            return new ACK("DELRQ").getAck();
         }
-        return error;
+        return new ERROR(5).getError();
     }
 }
     

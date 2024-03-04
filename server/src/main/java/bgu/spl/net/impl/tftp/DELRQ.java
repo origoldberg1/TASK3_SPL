@@ -1,7 +1,5 @@
 package bgu.spl.net.impl.tftp;
-
 import java.io.IOException;
-import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,9 +11,12 @@ import bgu.spl.net.srv.Connections;
 public class DELRQ implements Command<byte[]> {
 
     @Override
-    public byte[] execute(byte[] arg, byte[] error, BlockingConnectionHandler <byte[]> handler) {
-        byte[] ack={(byte)0x00, (byte)0x09, (byte)0x00, (byte)0x00};
-        byte [] bytesFileName= new byte[arg.length-2];//acording ori we get args withoud the last byte 
+    public byte[] execute(byte[] arg, BlockingConnectionHandler <byte[]> handler) {
+        if(handler.getName()==null)
+        {
+            return new ERROR(6).getError();
+        }
+        byte [] bytesFileName= new byte[arg.length-2];//Acording to Ori we get args without the last byte 
         for(int i=2; i<arg.length-2; i++)
         {
             bytesFileName[i-2]=arg[i];
@@ -24,8 +25,10 @@ public class DELRQ implements Command<byte[]> {
         try{
             Path filePath = Paths.get("server/Files/"+fileName+".txt");
             Files.delete(filePath);
-            return ack;
-        } catch(IOException e){return error;}
+            Connections connections=handler.getConnections();
+            connections.bcast(bytesFileName, (byte)0x00);
+            return new ACK("DELRQ").getAck();
+        } catch(IOException e){return new ERROR(1).getError();}
     }
     
 }

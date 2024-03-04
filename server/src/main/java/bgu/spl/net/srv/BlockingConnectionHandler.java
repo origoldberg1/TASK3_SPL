@@ -19,7 +19,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     private volatile boolean connected = true;
     static volatile int connectionCounter = 0;
     private volatile int id; //we add this
-    private volatile String userName;
+    private volatile String userName; //we add this
 
     public BlockingConnectionHandler(Socket sock, Connections<T> connections, MessageEncoderDecoder<T> reader, MessagingProtocol<T> protocol) {
         this.sock = sock;

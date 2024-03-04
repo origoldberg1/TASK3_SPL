@@ -11,4 +11,6 @@ public interface Connections<T> {
     boolean disconnect(int connectionId);
 
     boolean isExist(String userName); //we add this method
+    
+    void bcast(byte [] bytesFileName, byte b); //we add this method
 }

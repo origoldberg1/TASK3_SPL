@@ -1,8 +1,5 @@
 package bgu.spl.net.impl.tftp;
-
-import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,12 +7,15 @@ import java.nio.file.Paths;
 
 import bgu.spl.net.impl.rci.Command;
 import bgu.spl.net.srv.BlockingConnectionHandler;
-import bgu.spl.net.srv.Connections;
 
 public class RRQ implements Command<byte[]> {
 
     @Override
-    public byte[] execute(byte[] arg, byte [] error, BlockingConnectionHandler <byte[]> handler) {
+    public byte[] execute(byte[] arg, BlockingConnectionHandler <byte[]> handler) {
+        if(handler.getName()==null)
+        {
+            return new ERROR(6).getError();
+        }
         byte [] bytesFileName= new byte[arg.length-2];//acording ori we get args withoud the last byte 
         for(int i=2; i<arg.length-2; i++)
         {
@@ -27,7 +27,7 @@ public class RRQ implements Command<byte[]> {
             byte[] dataByte = Files.readAllBytes(filePath);
             return dataByte;
 
-        }catch(IOException e){return error;}
+        }catch(IOException e){return new ERROR(1).getError();}
     }
     
 }
