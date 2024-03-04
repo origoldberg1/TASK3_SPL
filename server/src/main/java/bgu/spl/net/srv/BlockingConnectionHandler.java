@@ -20,7 +20,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     static volatile int connectionCounter = 0;
     private volatile int id; //we add this
     private volatile String userName; //we add this
-    private volatile String fileToWritePath;
+    private volatile String fileToWritePath; //we add it
 
     public BlockingConnectionHandler(Socket sock, Connections<T> connections, MessageEncoderDecoder<T> reader, MessagingProtocol<T> protocol) {
         this.sock = sock;
@@ -28,8 +28,9 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
         this.encdec = reader;
         this.protocol = protocol;
         this.id=connectionCounter; //make sure with ori it is ok to increase connectionCounter just in run method
-        this.userName=null;
-        this.fileToWritePath=null;
+        this.userName=null; //we add it
+        this.fileToWritePath=null; //we add it
+
     }
 
     @Override
@@ -46,7 +47,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
                 T nextMessage = encdec.decodeNextByte((byte) read);
                 if (nextMessage != null) {
                     T response = protocol.process(nextMessage);
-                    if (response != null) {
+                    if (response != null) { //means we got al packet from encdec?
                         out.write(encdec.encode(response));
                         out.flush();
                     }
@@ -66,11 +67,10 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     }
 
     @Override
-    public void send(T msg) {
-        //IMPLEMENT IF NEEDED
+    public  void send(T msg) { //implement if needed
     }
 
-    public Connections getConnections() //we add this method
+    public Connections getConnectionsObject() //we add this method
     {
         return connections;
     }

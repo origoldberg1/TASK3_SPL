@@ -20,13 +20,11 @@ public class TftpConnections implements Connections<byte[]>{
         // TODO Auto-generated method stub
         ConnectionHandler<byte[]> handler = connections.get(connectionId);
         handler.send(msg);
-        return true;
-
-        
+        return true;      
     }
 
     @Override
-    public boolean disconnect(int connectionId) 
+    public boolean disconnect(int connectionId) //we didn't use this method
     {
         // TODO Auto-generated method stub
         connections.remove(connectionId);
@@ -45,20 +43,25 @@ public class TftpConnections implements Connections<byte[]>{
         return true;
     }
 
-    public void bcast(byte [] fileNameinBytes, String fileNameString, byte deletedOrAdded) //deleteOrAdded hold (byte)0x00 if the file was deleted, otherwise (byte)0x01
+    public  ConcurrentHashMap<Integer, BlockingConnectionHandler<byte[]>> getConnectionsHash()
     {
-        byte [] bcastMsg= new BCAST(fileNameinBytes,deletedOrAdded).getBcast();
-        for(int i=0; i<connections.size(); i++)
-        {
-            if(connections.get(i).getName()!=null) //means this CH is logged in
-            {
-                connections.get(i).send(bcastMsg);
-            }
-            if(deletedOrAdded==(byte)0x00 && connections.get(i).getFileToWritePath()!=null && connections.get(i).getFileToWritePath()==fileNameString)
-            {
-                connections.get(i).setFileToWritePath(null);
-            }
-        }
-    }
+        return connections;
+    } 
+
+    // public void bcast(byte [] fileNameinBytes, String fileNameString, byte deletedOrAdded) //deleteOrAdded hold (byte)0x00 if the file was deleted, otherwise (byte)0x01
+    // {
+    //     byte [] bcastMsg= new BCAST(fileNameinBytes,deletedOrAdded).getBcast();
+    //     for(int i=0; i<connections.size(); i++)
+    //     {
+    //         if(connections.get(i).getName()!=null) //means this CH is logged in
+    //         {
+    //             connections.get(i).send(bcastMsg);
+    //         }
+    //         if(deletedOrAdded==(byte)0x00 && connections.get(i).getFileToWritePath()!=null && connections.get(i).getFileToWritePath()==fileNameString)
+    //         {
+    //             connections.get(i).setFileToWritePath(null);
+    //         }
+    //     }
+    // }
 
 }

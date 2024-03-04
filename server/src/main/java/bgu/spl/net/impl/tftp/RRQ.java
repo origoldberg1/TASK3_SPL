@@ -25,7 +25,7 @@ public class RRQ implements Command<byte[]> {
         try{
             Path filePath = Paths.get("server/Flies"+fileName); 
             byte[] dataByte = Files.readAllBytes(filePath);
-            return dataByte;
+            return dataByte; //TODO: converting to packets
 
         }catch(IOException e){return new ERROR(1).getError();}
     }

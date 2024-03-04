@@ -11,7 +11,7 @@ public class LOGRQ implements Command<byte[]>
     public byte[] execute(byte[] arg, BlockingConnectionHandler <byte[]> handler) 
     {
         // TODO Auto-generated method stub
-        Connections connections=handler.getConnections();
+        Connections connections=handler.getConnectionsObject();
         //extracting userName
         byte [] bytesUserName= new byte[arg.length-2];//acording to Ori we get args without the last byte 
         for(int i=2; i<arg.length-2; i++)

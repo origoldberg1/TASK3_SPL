@@ -1,6 +1,7 @@
 package bgu.spl.net.srv;
 
 import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
 
 public interface Connections<T> {
 
@@ -11,6 +12,7 @@ public interface Connections<T> {
     boolean disconnect(int connectionId);
 
     boolean isExist(String userName); //we add this method
-    
-    void bcast(byte [] fileNameInBytes, String fileNameString, byte b); //we add this method
+
+    ConcurrentHashMap<Integer, BlockingConnectionHandler<byte[]>> getConnectionsHash(); //we add this method
+
 }
