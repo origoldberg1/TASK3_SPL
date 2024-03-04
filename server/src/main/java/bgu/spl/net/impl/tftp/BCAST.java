@@ -10,7 +10,7 @@ public class BCAST //using by Connections class
         bcastMsg[1]=(byte)0x09;
         bcastMsg[2]=(byte)deletedOrAdded;
         bcastMsg[bcastMsg.length-1]=(byte)0x00;
-        for(int i=0; i<fileName.length; i++)//filling the file Name was deleted
+        for(int i=0; i<fileName.length; i++)//filling the file Name was deleted or added
         {
             bcastMsg[i+3]=fileName[0]; //fileName starts in third cell according to BCAST Packet format
         }
