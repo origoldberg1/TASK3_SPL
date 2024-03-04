@@ -23,7 +23,7 @@ public class RRQ implements Command<byte[]> {
         }
         String fileName = new String(bytesFileName, StandardCharsets.UTF_8);             
         try{
-            Path filePath = Paths.get("server/Flies"+fileName+".txt"); 
+            Path filePath = Paths.get("server/Flies"+fileName); 
             byte[] dataByte = Files.readAllBytes(filePath);
             return dataByte;
 

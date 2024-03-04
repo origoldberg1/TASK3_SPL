@@ -24,11 +24,11 @@ public class DELRQ implements Command<byte[]>
         }
         String fileName = new String(bytesFileName, StandardCharsets.UTF_8);
         try{
-            Path filePath = Paths.get("server/Files/"+fileName+".txt");
+            Path filePath = Paths.get("server/Files/"+fileName);
             Files.delete(filePath);
             Connections connections=handler.getConnections();
             connections.bcast(bytesFileName, fileName, (byte)0x00);
-            return new ACK((byte)0x00).getAck();
+            return new ACK(new byte[]{0,0}).getAck();
         } catch(IOException e){return new ERROR(1).getError();}
     }   
 }

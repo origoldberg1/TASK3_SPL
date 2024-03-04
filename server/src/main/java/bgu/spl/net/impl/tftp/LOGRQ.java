@@ -24,7 +24,7 @@ public class LOGRQ implements Command<byte[]>
             return new ERROR(7).getError();
         }
         handler.setName(userName);
-        return new ACK((byte)0x00).getAck();
+        return new ACK(new byte[]{0,0}).getAck();
     }
     
 }

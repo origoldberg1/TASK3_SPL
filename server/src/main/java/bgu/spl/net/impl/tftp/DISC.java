@@ -13,7 +13,7 @@ public class DISC implements Command<byte[]> {
            return new ERROR(6).getError();
         }
         handler.setName(null);
-        return new ACK((byte)0x00).getAck();
+        return new ACK(new byte[]{0,0}).getAck();
     }
     
 }

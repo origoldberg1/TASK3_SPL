@@ -30,19 +30,19 @@ public class TftpProtocol implements BidiMessagingProtocol<byte[]>  {
         System.out.println("process");
         if(message.length > 1){
             switch (message[1]) {
-                case (byte)1:
+                case 1:
                     return new RRQ().execute(message, handler);
-                case (byte)2:
+                case 2:
                     return new WRQ().execute(message, handler);
-                case (byte)3:
+                case 3:
                     return new DATA().execute(message, handler);                    
-                case (byte)6:
+                case 6:
                     return new DIRQ().execute(message, handler);
-                case (byte)7:
+                case 7:
                     return new LOGRQ().execute(message, handler);
-                case (byte)8:
+                case 8:
                     return new DELRQ().execute(message, handler);
-                case (byte)10:
+                case 10:
                     return new DISC().execute(message, handler);
                 default:
                     return new ERROR (4).getError();

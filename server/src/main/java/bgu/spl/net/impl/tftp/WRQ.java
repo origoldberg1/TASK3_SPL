@@ -23,14 +23,14 @@ public class WRQ implements Command<byte[]>
             bytesFileName[i-2]=arg[i];
         }
         String fileName = new String(bytesFileName, StandardCharsets.UTF_8);             
-        Path filePath = Paths.get("server/Files/"+fileName+".txt"); 
+        Path filePath = Paths.get("server/Files/"+fileName); 
         if(Files.exists(filePath))
         {
             return new ERROR(5).getError();  
         }         
         Connections connections= handler.getConnections();
         connections.bcast(bytesFileName, fileName, (byte)0x01);
-        return new ACK((byte)0x00).getAck();
+        return new ACK(new byte[]{0,0}).getAck();
     }
 }
     

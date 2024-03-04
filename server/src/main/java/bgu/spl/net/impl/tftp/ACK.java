@@ -3,14 +3,14 @@ public class ACK
 {
   private byte [] ackInByte;
 
-    public ACK(byte blockNumber)
+    public ACK(byte[] blockNumber)
     {
-            ackInByte= new byte[]{(byte)0x00, (byte)0x04, (byte)0x00, blockNumber}; //TODO     
+        ackInByte= new byte[]{(byte)0x00, (byte)0x04, blockNumber[0], blockNumber[1]}; //TODO     
     }
 
     public byte [] getAck()
     {
-    return ackInByte;
+        return ackInByte;
     }
 }
 
