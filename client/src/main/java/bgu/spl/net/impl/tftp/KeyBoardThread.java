@@ -14,7 +14,6 @@ public class KeyBoardThread implements Runnable{
         this.commandQueue = commandQueue;
     }
 
-
     @Override
     public void run() {
         // TODO Auto-generated method stub

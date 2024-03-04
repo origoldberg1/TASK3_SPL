@@ -7,14 +7,10 @@ import java.nio.file.Path;
 import bgu.spl.net.api.MessageEncoderDecoder;
 
 public class SendData {
-    int n;
-    MessageEncoderDecoder<byte[]> encdec;
     byte[] fileBytes;
     int defaultPacketSize = 512;
 
-    public SendData(Path filePath, MessageEncoderDecoder<byte[]> encdec){
-        this.n = 0;
-        this.encdec = encdec;
+    public SendData(Path filePath){
         try {
             fileBytes = Files.readAllBytes(filePath);
         } catch (IOException e) {
@@ -22,7 +18,10 @@ public class SendData {
         }
     }
 
-    public byte[] makePacket(){
+    public byte[] makePacket(int n){
+        if(n * defaultPacketSize > fileBytes.length) {
+            return null;
+        }
         int indent = n * defaultPacketSize;
         int i = 0;
         byte[] packet = new byte[defaultPacketSize];
@@ -30,11 +29,10 @@ public class SendData {
             packet[i] = fileBytes[i + indent];
             i++;
         }
-        if(i < packet.length){
+        if(i < defaultPacketSize){
             trim(packet, i);
         }
-        n++;
-        return encdec.encode(packet);
+        return packet;
     }
 
     private byte[] trim(byte[] packet, int len){

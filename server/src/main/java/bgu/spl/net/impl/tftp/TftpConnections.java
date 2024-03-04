@@ -32,4 +32,16 @@ public class TftpConnections implements Connections<byte[]>{
         connections.remove(connectionId);
     }
 
+    @Override
+    public boolean isExist(String userName) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isExist'");
+    }
+
+    @Override
+    public void bcast(byte[] fileNameInBytes, String fileNameString, byte b) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'bcast'");
+    }
+
 }

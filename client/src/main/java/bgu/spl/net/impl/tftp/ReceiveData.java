@@ -1,12 +1,12 @@
 package bgu.spl.net.impl.tftp;
 
-public class RecieveData {
+public class ReceiveData {
     int n; 
     byte[] data;
     int defaultPacketSize = 512;
     
     
-    public RecieveData() {
+    public ReceiveData() {
         this.n = 0;
         this.data = new byte[0];
     }

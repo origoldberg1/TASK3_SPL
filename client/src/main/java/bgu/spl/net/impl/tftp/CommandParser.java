@@ -15,7 +15,7 @@ public class CommandParser {
         // TODO Auto-generated method stub
         String[] words = input.split(" ");
         pushByte((byte)0);
-        byte opcode = getOpcode(words[0]);
+        byte opcode = Util.getOpcodeValue(words[0]);
         pushByte(opcode);
         for (int i = 1; i < words.length; i++) {
             for (Byte nextByte : words[i].getBytes()) {
@@ -49,33 +49,7 @@ public class CommandParser {
         return res;
     }
 
-    private byte getOpcode(String str){
-        switch (str) {
-            case "RRQ":
-                return 1;
-            case "WRQ":
-                return 2;
-            case "DATA":
-                return 3;
-            case "ACK":
-                return 4;
-            case "ERROR":
-                return 5;
-            case "DIRQ":
-                return 6;
-            case "LOGRQ":
-                return 7;
-            case "DELRQ":
-                return 8;
-            case "BCAST":
-                return 9;
-            case "DISC":
-                return 10;
-    
-            default:
-                return 0;
-        }
-    }
+
 
     private boolean addZero(byte opcode){
         return (opcode == 1 || opcode == 2 || opcode == 5 || opcode == 7 || opcode == 8 || opcode == 9);

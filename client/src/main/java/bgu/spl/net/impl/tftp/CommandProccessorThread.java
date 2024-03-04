@@ -1,18 +1,12 @@
 package bgu.spl.net.impl.tftp;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.BlockingQueue;
 
-enum State {
-    WritingFile,
-    ReadingFile,
-    Simple
-};
+
 
 
 public class CommandProccessorThread implements Runnable {
@@ -22,9 +16,9 @@ public class CommandProccessorThread implements Runnable {
     CommandParser commandParser;
     OutputStream outputStream;
 
-    State state;
-    String fileName;
-    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(10);
+
+    Util.State state;
+    SendData sendData;
 
     public CommandProccessorThread(BlockingQueue<String> commandQueue, CommandParser commandParser,
             OutputStream outputStream) {
@@ -40,21 +34,29 @@ public class CommandProccessorThread implements Runnable {
             String command;
             try {
                 command = commandQueue.take();
-                String op = getOp(command);
-                Path filePath = FileSystems.getDefault().getPath("").resolve(fileName );
-                byte[] packet;
-                if ("ACK".equals(op) && state == State.WritingFile) {
+                String op = Util.getOpcode(command);
+                byte[] packet = null;
+                if ("ACK".equals(op) && state == Util.State.SendingData) {
                     int arg = getIntArg(command);
-                    packet = sendFileData(filePath, arg);
-                } else if ("ACK".equals(op) && state == State.ReadingFile) {
+                    packet = this.sendData.makePacket(arg);
+                    packet = padDataPacket(packet, arg);
+                } else if ("ACK".equals(op) && state == Util.State.ReceivingData) {
                     // read data
                     packet = commandParser.parse("ACK");
                 } else if ("ACK".equals(op)) {
                     System.err.println("ACK");
+                } else if("WRQ".equals(op)){
+                    Path filePath = Paths.get(System.getProperty("user.dir")).resolve("client").resolve(getFileName(command));
+                    sendData = new SendData(filePath);
+                    packet = commandParser.parse(command);
+                    state = Util.State.SendingData;
                 } else {
                     packet = commandParser.parse(command);
+                } 
+                if(packet != null){
+                    outputStream.write(packet);
+                    outputStream.flush();
                 }
-                outputStream.write(packet);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -63,22 +65,41 @@ public class CommandProccessorThread implements Runnable {
         }
     } 
 
-    private String getOp(String command) {
-        return command.split(" ")[0];
-    }
-
-    private String getPacketSize(String command) {
-        return command.split(" ")[1];
-    }
-
     private String getArg(String command){
-        return command.split(" ")[2];
+        return command.split(" ")[1];
     }
 
     private int getIntArg(String command) {
         return Integer.valueOf(getArg(command));
     }
 
+    private String getFileName(String command){
+       String[] splitCommand = command.split(" ");
+       String fileName = splitCommand[1];
+       for (int i = 2; i < splitCommand.length; i++) {
+            fileName = fileName  + " " + splitCommand[i];
+       } 
+       return fileName;
+    }
+
+    private byte[] padDataPacket(byte[] packet, int blockNumber){
+        byte[] res = new byte[packet.length + 6];
+        res[0] = 0;
+        res[1] = 3;
+
+        byte[] packetSizeBytes = Util.intToTwoByte(packet.length);
+        res[2] = packetSizeBytes[0];
+        res[3] = packetSizeBytes[1];
+
+        byte[] blockNumberBytes = Util.intToTwoByte(packet.length);
+        res[4] = blockNumberBytes[0];
+        res[5] = blockNumberBytes[1];
+
+        for (int i = 0; i < packet.length; i++) {
+            res[i + 6] = packet[i];
+        }
+        return res;
+    }
 
 }
 

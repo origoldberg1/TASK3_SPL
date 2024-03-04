@@ -32,13 +32,17 @@ public class ListeningThread implements Runnable{
                     for (int i = 0; i < nextMessage.length; i++){
                         System.err.println(i + ": " + nextMessage[i]);
                     }
+                    if(nextMessage[0] == 0 && nextMessage[1] == 4){
+                        try {
+                            commandQueue.put("ACK" +String.valueOf(Util.twoByteToInt(new byte[]{nextMessage[2], nextMessage[3]})));
+                        } catch (InterruptedException e) {}
+                    }
                 }
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'run'");
+        }
     }
     
 }

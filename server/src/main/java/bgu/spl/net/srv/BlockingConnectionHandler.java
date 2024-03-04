@@ -7,6 +7,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.invoke.VolatileCallSite;
 import java.net.Socket;
 
 public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler<T> {
@@ -19,19 +20,24 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     private BufferedOutputStream out;
     private volatile boolean connected = true;
     static volatile int connectionCounter = 0;
+    private volatile int id;
+    private volatile String userName;
+    private volatile String fileToWritePath;
 
     public BlockingConnectionHandler(Socket sock, Connections<T> connections, MessageEncoderDecoder<T> reader, MessagingProtocol<T> protocol) {
         this.sock = sock;
         this.connections = connections;
         this.encdec = reader;
         this.protocol = protocol;
+        this.id = connectionCounter++;
+        this.userName = null;
+        this.fileToWritePath = null;
     }
 
     @Override
     public void run() {
         try (Socket sock = this.sock) { //just for automatic closing
             this.protocol.start(connectionCounter, connections, this); 
-            connectionCounter ++;
             int read;
 
             in = new BufferedInputStream(sock.getInputStream());
@@ -68,5 +74,33 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public Connections<T> getConnections(){ //we add this method
+        return connections;
+    }
+
+    public int id(){ //we add this method
+        return id;
+    }
+
+    public String getName() {//we add this method
+        return this.userName;
+    }
+
+    public String setName(String userName){ //we add this method
+        return this.userName=userName;
+    }
+
+    public int getId(){ //we add this method
+        return this.id;
+    }
+
+    public String getFileToWritePath(){ //we add this method
+        return fileToWritePath;
+    }
+    
+    public void setFileToWritePath(String fileToWritePath){
+        this.fileToWritePath=fileToWritePath;
     }
 }
