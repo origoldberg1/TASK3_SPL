@@ -19,12 +19,12 @@ public class LOGRQ implements Command<byte[]>
             bytesUserName[i-2]=arg[i];
         }
         String userName = new String(bytesUserName, StandardCharsets.UTF_8);
-        if(connections.isExist(userName))// if there such userName it means someone with this name is already logged in
+        if(connections.isExist(userName))// if there is such userName it means someone with this name is already logged in
         {
             return new ERROR(7).getError();
         }
         handler.setName(userName);
-        return new ACK("LOGRQ").getAck();
+        return new ACK((byte)0x00).getAck();
     }
     
 }

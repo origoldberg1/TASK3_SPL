@@ -3,16 +3,9 @@ public class ACK
 {
   private byte [] ackInByte;
 
-    public ACK(String opcode)
+    public ACK(byte blockNumber)
     {
-        if(opcode=="LOGRQ" || opcode=="WRQ" || opcode=="DELERQ"|| opcode=="DISC") //according to instructions in 3.2.6
-        {
-            ackInByte= new byte[]{(byte)0x00, (byte)0x09, (byte)0x00, (byte)0x00};
-        }
-        else //acknowledge Data packet
-        {
-            ackInByte= new byte[]{(byte)0x00, (byte)0x09, (byte)0x00, (byte)0x00}; //TODO
-        }
+            ackInByte= new byte[]{(byte)0x00, (byte)0x04, (byte)0x00, blockNumber}; //TODO     
     }
 
     public byte [] getAck()

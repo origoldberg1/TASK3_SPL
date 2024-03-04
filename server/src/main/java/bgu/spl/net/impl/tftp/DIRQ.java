@@ -18,10 +18,10 @@ public class DIRQ implements Command<byte[]> {
         File[] files = folder.listFiles();
         //creating list with file names in byte (0 byte between each of them)
         List<Byte> bytesNameFiles = new ArrayList<>();
-        for (File file: files)
+        for (File file: files) //passing each file
         {
             String fileName=file.getName();
-            for(byte b: fileName.getBytes())
+            for(byte b: fileName.getBytes()) //passing each byte in fileName
             {
                 bytesNameFiles.add(b);   
             }

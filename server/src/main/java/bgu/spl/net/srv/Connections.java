@@ -12,5 +12,5 @@ public interface Connections<T> {
 
     boolean isExist(String userName); //we add this method
     
-    void bcast(byte [] bytesFileName, byte b); //we add this method
+    void bcast(byte [] fileNameInBytes, String fileNameString, byte b); //we add this method
 }

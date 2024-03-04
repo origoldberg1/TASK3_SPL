@@ -17,7 +17,7 @@ public class WRQ implements Command<byte[]>
         {
             return new ERROR(6).getError();
         }
-        byte [] bytesFileName= new byte[arg.length-2];//acording ori we get args withoud the last byte 
+        byte [] bytesFileName= new byte[arg.length-2];//According to ori we get arg without the last byte 
         for(int i=2; i<arg.length-2; i++)
         {
             bytesFileName[i-2]=arg[i];
@@ -26,11 +26,11 @@ public class WRQ implements Command<byte[]>
         Path filePath = Paths.get("server/Files/"+fileName+".txt"); 
         if(Files.exists(filePath))
         {
-            Connections connections= handler.getConnections();
-            connections.bcast(bytesFileName, (byte)0x01);
-            return new ACK("DELRQ").getAck();
-        }
-        return new ERROR(5).getError();
+            return new ERROR(5).getError();  
+        }         
+        Connections connections= handler.getConnections();
+        connections.bcast(bytesFileName, fileName, (byte)0x01);
+        return new ACK((byte)0x00).getAck();
     }
 }
     

@@ -10,14 +10,14 @@ public class ERROR
     {
         msgList = new byte[8][];
         try{
-                msgList[0] = "Not defined, see error message (if any)".getBytes("UTF-8");
-                msgList[1] = "File not found – RRQ DELRQ of non-existing file".getBytes("UTF-8");
+                msgList[0] = "Not defined".getBytes("UTF-8");
+                msgList[1] = "File not found".getBytes("UTF-8");
                 msgList[2] = "Access violation – File cannot be written, read or deleted".getBytes("UTF-8");
                 msgList[3] = "Disk full or allocation exceeded – No room in disk".getBytes("UTF-8");
-                msgList[4] = "Illegal TFTP operation – Unknown Opcode".getBytes("UTF-8");
-                msgList[5] = "File already exists – File name exists on WRQ".getBytes("UTF-8");
-                msgList[6] = "User not logged in – Any opcode received before Login completes".getBytes("UTF-8");
-                msgList[7] = "User already logged in – Login username already connected".getBytes("UTF-8");
+                msgList[4] = "Illegal TFTP operation".getBytes("UTF-8");
+                msgList[5] = "File already exists".getBytes("UTF-8");
+                msgList[6] = "User not logged in".getBytes("UTF-8");
+                msgList[7] = "User already logged in".getBytes("UTF-8");
     }catch(UnsupportedEncodingException e){}
     
 

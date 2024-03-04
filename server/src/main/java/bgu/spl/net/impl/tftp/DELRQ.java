@@ -8,10 +8,11 @@ import bgu.spl.net.impl.rci.Command;
 import bgu.spl.net.srv.BlockingConnectionHandler;
 import bgu.spl.net.srv.Connections;
 
-public class DELRQ implements Command<byte[]> {
-
+public class DELRQ implements Command<byte[]> 
+{
     @Override
-    public byte[] execute(byte[] arg, BlockingConnectionHandler <byte[]> handler) {
+    public byte[] execute(byte[] arg, BlockingConnectionHandler <byte[]> handler) 
+    {
         if(handler.getName()==null)
         {
             return new ERROR(6).getError();
@@ -26,9 +27,8 @@ public class DELRQ implements Command<byte[]> {
             Path filePath = Paths.get("server/Files/"+fileName+".txt");
             Files.delete(filePath);
             Connections connections=handler.getConnections();
-            connections.bcast(bytesFileName, (byte)0x00);
-            return new ACK("DELRQ").getAck();
+            connections.bcast(bytesFileName, fileName, (byte)0x00);
+            return new ACK((byte)0x00).getAck();
         } catch(IOException e){return new ERROR(1).getError();}
-    }
-    
+    }   
 }

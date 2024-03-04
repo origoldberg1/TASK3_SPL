@@ -34,6 +34,8 @@ public class TftpProtocol implements BidiMessagingProtocol<byte[]>  {
                     return new RRQ().execute(message, handler);
                 case (byte)2:
                     return new WRQ().execute(message, handler);
+                case (byte)3:
+                    return new DATA().execute(message, handler);                    
                 case (byte)6:
                     return new DIRQ().execute(message, handler);
                 case (byte)7:

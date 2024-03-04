@@ -45,14 +45,18 @@ public class TftpConnections implements Connections<byte[]>{
         return true;
     }
 
-    public void bcast(byte [] fileName, byte deletedOrAdded) //deleteOrAdded hold (byte)0x00 if the file was deleted, otherwise (byte)0x01
+    public void bcast(byte [] fileNameinBytes, String fileNameString, byte deletedOrAdded) //deleteOrAdded hold (byte)0x00 if the file was deleted, otherwise (byte)0x01
     {
-        byte [] bcastMsg= new BCAST(fileName,deletedOrAdded).getBcast();
+        byte [] bcastMsg= new BCAST(fileNameinBytes,deletedOrAdded).getBcast();
         for(int i=0; i<connections.size(); i++)
         {
             if(connections.get(i).getName()!=null) //means this CH is logged in
             {
                 connections.get(i).send(bcastMsg);
+            }
+            if(deletedOrAdded==(byte)0x00 && connections.get(i).getFileToWritePath()!=null && connections.get(i).getFileToWritePath()==fileNameString)
+            {
+                connections.get(i).setFileToWritePath(null);
             }
         }
     }

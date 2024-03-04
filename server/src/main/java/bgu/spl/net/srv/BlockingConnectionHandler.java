@@ -20,6 +20,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     static volatile int connectionCounter = 0;
     private volatile int id; //we add this
     private volatile String userName; //we add this
+    private volatile String fileToWritePath;
 
     public BlockingConnectionHandler(Socket sock, Connections<T> connections, MessageEncoderDecoder<T> reader, MessagingProtocol<T> protocol) {
         this.sock = sock;
@@ -28,6 +29,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
         this.protocol = protocol;
         this.id=connectionCounter; //make sure with ori it is ok to increase connectionCounter just in run method
         this.userName=null;
+        this.fileToWritePath=null;
     }
 
     @Override
@@ -92,5 +94,15 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     {
         return this.id;
     }
+
+    public String getFileToWritePath() //we add this method
+    {
+        return fileToWritePath;
+    }
+    
+     public void setFileToWritePath(String fileToWritePath)
+     {
+        this.fileToWritePath=fileToWritePath;
+     }
 }
 
