@@ -1,8 +1,7 @@
 package bgu.spl.net.impl.rci;
-
-import java.io.Serializable;
-
+import bgu.spl.net.impl.tftp.TftpConnections;
+import bgu.spl.net.srv.BlockingConnectionHandler;
 public interface Command<T>{
 
-    byte[] execute(T arg);
+    void execute(T arg, BlockingConnectionHandler<byte[]> handler, TftpConnections connectionsObject);
 }

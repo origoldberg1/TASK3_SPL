@@ -1,19 +1,17 @@
 package bgu.spl.net.impl.tftp;
-
 import java.util.concurrent.ConcurrentHashMap;
-
+import bgu.spl.net.srv.BlockingConnectionHandler;
 import bgu.spl.net.srv.ConnectionHandler;
 import bgu.spl.net.srv.Connections;
 
 public class TftpConnections implements Connections<byte[]>{
-
-    ConcurrentHashMap<Integer, ConnectionHandler<byte[]>> connections = new ConcurrentHashMap<>();
+    ConcurrentHashMap<Integer, BlockingConnectionHandler<byte[]>> connections = new ConcurrentHashMap<>(); //we think integer is the id and the other one is the connectionHandler
 
     @Override
-    public void connect(int connectionId, ConnectionHandler<byte[]> handler) {
+    public boolean connect(int connectionId, BlockingConnectionHandler<byte[]> handler) {
         // TODO Auto-generated method stub
-        System.out.println(connectionId);
         connections.put(connectionId, handler);
+        return true;
     }
 
     @Override
@@ -21,27 +19,51 @@ public class TftpConnections implements Connections<byte[]>{
         // TODO Auto-generated method stub
         ConnectionHandler<byte[]> handler = connections.get(connectionId);
         handler.send(msg);
-        return true;
-
-        
+        return true;      
     }
 
     @Override
-    public void disconnect(int connectionId) {
-        // TODO Auto-generated method stub
+    public void disconnect(int connectionId) //we didn't use this method
+    {
         connections.remove(connectionId);
     }
 
-    @Override
-    public boolean isExist(String userName) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isExist'");
+    public boolean isExistByUserName(String userName) //we add this method in order to check if this userName is already connected
+    {
+        for(int i=1; i<=connections.size(); i++)
+        {
+            if(connections.get(i).getName()!=null && (connections.get(i).getName()==userName))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
-    @Override
-    public void bcast(byte[] fileNameInBytes, String fileNameString, byte b) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'bcast'");
+    public boolean isExistById(int id) //we add this method in order to check if this userName is already connected
+    {
+        return connections.containsKey(id);
     }
+
+    public  ConcurrentHashMap<Integer, BlockingConnectionHandler<byte[]>> getConnectionsHash()
+    {
+        return connections;
+    } 
+
+    // public void bcast(byte [] fileNameinBytes, String fileNameString, byte deletedOrAdded) //deleteOrAdded hold (byte)0x00 if the file was deleted, otherwise (byte)0x01
+    // {
+    //     byte [] bcastMsg= new BCAST(fileNameinBytes,deletedOrAdded).getBcast();
+    //     for(int i=0; i<connections.size(); i++)
+    //     {
+    //         if(connections.get(i).getName()!=null) //means this CH is logged in
+    //         {
+    //             connections.get(i).send(bcastMsg);
+    //         }
+    //         if(deletedOrAdded==(byte)0x00 && connections.get(i).getFileToWritePath()!=null && connections.get(i).getFileToWritePath()==fileNameString)
+    //         {
+    //             connections.get(i).setFileToWritePath(null);
+    //         }
+    //     }
+    // }
 
 }
