@@ -13,6 +13,7 @@ public class SendData {
     public SendData(Path filePath){
         try {
             fileBytes = Files.readAllBytes(filePath);
+            System.out.println("num of packets= " + Math.ceilDiv(fileBytes.length, defaultPacketSize));
         } catch (IOException e) {
             System.err.println("cannot convert file to byte[]");
         }
@@ -30,7 +31,7 @@ public class SendData {
             i++;
         }
         if(i < defaultPacketSize){
-            trim(packet, i);
+            return(trim(packet, i));
         }
         return packet;
     }

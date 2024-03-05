@@ -32,7 +32,8 @@ public class TftpProtocol implements BidiMessagingProtocol<byte[]>  {
         if(message.length > 1){
             Command cmd = getCommand(message);
             byte[] response = cmd.execute(message);
-            connectionHandler.send(response);
+            //connectionHandler.send(response);
+            return response;
         }
 
         return null;
@@ -69,7 +70,7 @@ public class TftpProtocol implements BidiMessagingProtocol<byte[]>  {
     @Override
     public boolean shouldTerminate() {
         // TODO implement this
-        System.out.println("should terminate: " + shouldTerminate);
+       // System.out.println("should terminate: " + shouldTerminate);
         return shouldTerminate;
         //
         //throw new UnsupportedOperationException("Unimplemented method 'shouldTerminate'");

@@ -14,26 +14,38 @@ public class TftpClientEncoderDecoder implements MessageEncoderDecoder<byte[]> {
     @Override
     public byte[] decodeNextByte(byte nextByte) {
         // TODO: implement this
+        byte[] res = null;
         if(len >= 2){
             switch (bytes[1]) {
                 case 1: case 2: case 7: case 8:
-                    if(decodeNextByteUntilZero(nextByte)) {return trim(bytes);}
-                case 3:
-                    if(decodeNextByteKnownPacketLength(nextByte, 6)) {return trim(bytes);}
-                case 4:
-                    if(decodeNextByteFixedSize(nextByte, 4)) {return trim(bytes);}
-                case 5:
-                    if(decodeNextByteError(nextByte)) {return trim(bytes);}
-                case 6: case 10:
-                    return trim(bytes); //will cause an error due to len = 2 always?
-                 case 9:
-                 if(decodeNextByteBcast(nextByte)) {return trim(bytes);}
-                default:
+                    if(decodeNextByteUntilZero(nextByte)) {res = bytes;}
                     break;
+                case 3:
+                    if(decodeNextByteKnownPacketLength(nextByte, 6)) {res = bytes;}
+                    break;
+                case 4:
+                    size = 4;
+                    if(decodeNextByteFixedSize(nextByte)) {res = bytes;}
+                    break;
+                case 5:
+                    if(decodeNextByteError(nextByte)) {res = bytes;}
+                    break;
+                case 6: case 10:
+                    return bytes; //will cause an error due to len = 2 always?
+                 case 9:
+                 if(decodeNextByteBcast(nextByte)) {res = bytes;}
+                    break;
+                default:
+                    break; //TODO: indicate error - non existing opcode
             }
         }
         else{
             pushByte(nextByte);
+        }
+        if(res != null) {
+            byte[] trimed = trim();
+            reset();
+            return trimed;
         }
         return null;
     }
@@ -66,7 +78,7 @@ public class TftpClientEncoderDecoder implements MessageEncoderDecoder<byte[]> {
         return size == len;
     }
 
-    private boolean decodeNextByteFixedSize(byte nextByte, int size){
+    private boolean decodeNextByteFixedSize(byte nextByte){
         pushByte(nextByte);
         return size == len;        
     }
@@ -83,12 +95,17 @@ public class TftpClientEncoderDecoder implements MessageEncoderDecoder<byte[]> {
         return false;
     }
 
-    private byte[] trim(byte[] bytes){
+    private byte[] trim(){
         byte[] res = new byte[len];
         for (int i = 0; i < res.length; i++) {
             res[i] = bytes[i];
         }
         return res;
+    }
+
+    private void reset(){
+        len = 0;
+        bytes = new byte[1 << 10];
     }
 
 }

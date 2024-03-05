@@ -2,6 +2,7 @@ package bgu.spl.net.srv;
 
 import bgu.spl.net.api.MessageEncoderDecoder;
 import bgu.spl.net.api.MessagingProtocol;
+import bgu.spl.net.impl.tftp.Util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -39,7 +40,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
         try (Socket sock = this.sock) { //just for automatic closing
             this.protocol.start(connectionCounter, connections, this); 
             int read;
-
+            out = new BufferedOutputStream(sock.getOutputStream());
             in = new BufferedInputStream(sock.getInputStream());
 
             while (!protocol.shouldTerminate() && connected && (read = in.read()) >= 0) {
@@ -49,10 +50,10 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
                     if (response != null) {
                         out.write(encdec.encode(response));
                         out.flush();
+                        System.out.println("handler: sendeing ack");
                     }
                 }
             }
-
         } catch (IOException ex) { 
             ex.printStackTrace();
         }
@@ -67,13 +68,13 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
 
     @Override
     public void send(T msg) {
-        try {
-            OutputStream out = sock.getOutputStream();
-            out.write(encdec.encode(msg));
-            out.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // try {
+        //     OutputStream out = sock.getOutputStream();
+        //     out.write(encdec.encode(msg));
+        //     out.flush();
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        // }
     }
 
     public Connections<T> getConnections(){ //we add this method

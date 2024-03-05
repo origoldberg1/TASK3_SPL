@@ -24,7 +24,8 @@ public class TftpEncoderDecoder implements MessageEncoderDecoder<byte[]> {
                     if(decodeNextByteKnownPacketLength(nextByte, 6)) {res = bytes;}
                     break;
                 case 4:
-                    if(decodeNextByteFixedSize(nextByte, 4)) {res = bytes;}
+                    size = 4;
+                    if(decodeNextByteFixedSize(nextByte)) {res = bytes;}
                     break;
                 case 5:
                     if(decodeNextByteError(nextByte)) {res = bytes;}
@@ -42,7 +43,9 @@ public class TftpEncoderDecoder implements MessageEncoderDecoder<byte[]> {
             pushByte(nextByte);
         }
         if(res != null) {
-            return trim();
+            byte[] trimed = trim();
+            reset();
+            return trimed;
         }
         return null;
     }
@@ -75,7 +78,7 @@ public class TftpEncoderDecoder implements MessageEncoderDecoder<byte[]> {
         return size == len;
     }
 
-    private boolean decodeNextByteFixedSize(byte nextByte, int size){
+    private boolean decodeNextByteFixedSize(byte nextByte){
         pushByte(nextByte);
         return size == len;        
     }
@@ -98,6 +101,11 @@ public class TftpEncoderDecoder implements MessageEncoderDecoder<byte[]> {
             res[i] = bytes[i];
         }
         return res;
+    }
+
+    private void reset(){
+        len = 0;
+        bytes = new byte[1 << 10];
     }
 
 }

@@ -4,11 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.security.Key;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 
 public class TftpClient {
+    public final static Object waitOnObject = new Object();
     public static void main(String[] args) throws IOException {
 
         if (args.length == 0) {
@@ -20,16 +18,15 @@ public class TftpClient {
             InputStream in = sock.getInputStream();
             OutputStream out = sock.getOutputStream();
 
-            final BlockingQueue<String> commandQueue = new ArrayBlockingQueue<>(100);
-
+            //final BlockingQueue<String> commandQueue = new ArrayBlockingQueue<>(100);
             final CommandParser commandParser = new CommandParser();
-            final KeyBoardThread keyBoradThread = new KeyBoardThread(commandQueue);
-            final ListeningThread listeningThread = new ListeningThread(in, commandQueue);
-            final CommandProccessorThread commandProccessorThread = new CommandProccessorThread(commandQueue, commandParser, out);
+            final KeyBoardThread keyBoradThread = new KeyBoardThread(commandParser, out);
+            final ListeningThread listeningThread = new ListeningThread(in);
+            //final CommandProccessorThread commandProccessorThread = new CommandProccessorThread(commandQueue, commandParser, out);
 
             new Thread(keyBoradThread).start();
             new Thread(listeningThread).start();
-            new Thread(commandProccessorThread).start();
+            //new Thread(commandProccessorThread).start();
 
     }
 
@@ -50,23 +47,23 @@ public class TftpClient {
             InputStream in = sock.getInputStream();
             OutputStream out = sock.getOutputStream();
 
-            System.out.println("sending message to server");
-            byte[] msg = new byte[] {
-                0,
-                7,
-                'o',
-                'r',
-                'i',
-                0
-            };
-            out.write(msg);
-            out.flush();
+            // System.out.println("sending message to server");
+            // byte[] msg = new byte[] {
+            //     0,
+            //     7,
+            //     'o',
+            //     'r',
+            //     'i',
+            //     0
+            // };
+            // out.write(msg);
+            // out.flush();
 
-            System.out.println("awaiting response");
-            for (int i = 0; i < 4; i++) {
-                int x = in.read();
-                System.out.println(x);
-            }
+            // System.out.println("awaiting response");
+            // for (int i = 0; i < 4; i++) {
+            //     int x = in.read();
+            //     System.out.println(x);
+            // }
             // byte[] response = in.readAllBytes();
             // System.out.println("message from server: " + response);
         }
