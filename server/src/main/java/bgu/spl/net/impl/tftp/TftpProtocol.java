@@ -4,9 +4,9 @@ import bgu.spl.net.srv.BlockingConnectionHandler;
 
 public class TftpProtocol implements BidiMessagingProtocol<byte[]>  {
 
-    boolean shouldTerminate = false;
     private BlockingConnectionHandler <byte[]> handler;
-    private TftpConnections connectionsObj;    
+    private TftpConnections connectionsObj;
+    private volatile boolean shouldTerminate=false;  
 
     
     @Override
@@ -45,7 +45,14 @@ public class TftpProtocol implements BidiMessagingProtocol<byte[]>  {
                     case 8:
                         new DELRQ().execute(message, handler, connectionsObj);
                     case 10:
-                        new DISC().execute(message, handler, connectionsObj);
+                        if(handler.getName()==null)
+                        {
+                            setShouldTerminate();
+                        }
+                        else //is logged in
+                        {
+                            connectionsObj.send(handler.getId(), new ACK(new byte[]{0,0}).getAck());
+                        }
                     default:
                         connectionsObj.send(handler.getId(),new ERROR (4).getError());
                 }
@@ -57,10 +64,13 @@ public class TftpProtocol implements BidiMessagingProtocol<byte[]>  {
 
     @Override
     public boolean shouldTerminate() {
-        // TODO implement this
-        System.out.println("should terminate: " + shouldTerminate);
         return shouldTerminate;
-        //
         //throw new UnsupportedOperationException("Unimplemented method 'shouldTerminate'");
     }
+
+    public void setShouldTerminate()
+    {
+        shouldTerminate=true;
+    }
+
 }

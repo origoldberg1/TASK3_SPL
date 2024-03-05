@@ -12,7 +12,8 @@ import java.util.ArrayList;
 public class RRQ implements Command<byte[]> {
 
     @Override
-    public void execute(byte[] arg, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject) {
+    public void execute(byte[] arg, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject) 
+    {
         byte [] bytesFileName= new byte[arg.length-2];//acording ori we get args withoud the last byte 
         for(int i=2; i<arg.length-2; i++)
         {
@@ -22,56 +23,65 @@ public class RRQ implements Command<byte[]> {
         try{
             Path filePath = Paths.get("server/Flies"+fileName); 
             byte[] dataByte = Files.readAllBytes(filePath);
-            byte [] dataByPacskets=divideByPacket(dataByte);
-            connectionsObject.send(handler.getId(), dataByPacskets); //TODO: converting to packets
+            sendPacketsOf(dataByte, handler, connectionsObject);
+            // connectionsObject.send(handler.getId(), dataByPacskets); //TODO: converting to packets
 
         }catch(IOException e){connectionsObject.send(handler.getId(),new ERROR(1).getError());}
     }
 
-    public static byte [] divideByPacket(byte [] dataByte)
+    public static void sendPacketsOf(byte [] dataByte, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject)
     {
         List<Byte> byteList = new ArrayList<>();
         int block=1;
         int leftBytes=dataByte.length;
         for(int i=0; i<dataByte.length; i++)
         {
+            List<Byte> packetList = new ArrayList<>();
+            byte [] packetArr;
             byteList.add((byte)0); //filling opcode field
             byteList.add((byte)3); //filling opcode field
             byteList.add((byte)0); //filling first byte of packet size 
             if(leftBytes<512)
             {
-                byteList.add((byte)512); //filling second byte of packet size 
+                byteList.add((byte)leftBytes); //filling second byte of packet size 
             }
             else
             {
-                byteList.add((byte)leftBytes); //filling second byte of packet size 
+                byteList.add((byte)512); //filling second byte of packet size 
             }
-            //TODO: defining block field
-            for(int k=1; k<=512 || k<leftBytes; k++) //filling data field
+            //TODO: filling block field
+            for(int k=1; k<=512 && k<=leftBytes; k++) //filling data field
             {
                 byteList.add(dataByte[k]);
             }
             leftBytes=leftBytes-512;
             block++;
+            packetArr=convertListToArr(packetList);
+            connectionsObject.send(handler.getId(), packetArr); 
 
             if (leftBytes==0) //we finished with the last packet which included 512 bytes so we should add one more packet
             {
-                byteList.add((byte)0); //filling opcode field
-                byteList.add((byte)3); //filling opcode field
-                byteList.add((byte)0); //filling packet size field
-                byteList.add((byte)0); //filling packet size field
-                //TODO: defining block field
+                packetArr=new byte [6];
+                packetArr[0]=(byte)0; //fiiling opcode field
+                packetArr[1]=(byte)3; //fiiling opcode field
+                packetArr[2]=(byte)3; //filling size packet field
+                packetArr[3]=(byte)3;  //filling size packet field
+                //packetArr[4]= TODO:filling block field
+                //packetArr[5]= TODO:filling block field
+                connectionsObject.send(handler.getId(), packetArr);
                 break;
             }
         }
+    }
 
-        //converting array to list
-        byte[] byteArray = new byte[byteList.size()];
-        for (int i = 0; i < byteList.size(); i++) {
-            byteArray[i] = byteList.get(i);
+    public static byte [] convertListToArr( List<Byte> packetList)
+    {
+        byte[] byteArray = new byte[packetList.size()];
+        for (int i = 0; i < packetList.size(); i++) 
+        {
+            byteArray[i] = packetList.get(i);
         }
         return byteArray;
-
     }
     
 }

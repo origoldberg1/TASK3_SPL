@@ -7,10 +7,12 @@ public interface Connections<T> {
 
     boolean send(int connectionId, T msg);
 
-    boolean disconnect(int connectionId);
+    void disconnect(int connectionId);
 
-    boolean isExist(String userName); //we add this method
+    boolean isExistByUserName(String userName); //we add this method
 
     ConcurrentHashMap<Integer, BlockingConnectionHandler<byte[]>> getConnectionsHash(); //we add this method
+
+     boolean isExistById(int id);
 
 }
