@@ -30,7 +30,7 @@ public abstract class BaseServer<T> implements Server<T> {
     @Override
     public void serve() {
 
-        Connections<T> connections = (Connections<T>)new TftpConnections();
+        TftpConnections connections = new TftpConnections();
 
         try (ServerSocket serverSock = new ServerSocket(port)) {
 			System.out.println("Server started");
@@ -46,8 +46,6 @@ public abstract class BaseServer<T> implements Server<T> {
                         connections,
                         encdecFactory.get(),
                         protocolFactory.get());
-                        
-
                 execute(handler);
             }
         } catch (IOException ex) {
