@@ -21,6 +21,9 @@ public class LOGRQ implements Command<byte[]>
             connectionsObject.send(handler.getId(), new ERROR(7).getError());
         }
         handler.setName(userName);
+        //ask Yaniv:
+        connectionsObject.connect(connectionsObject.connections.size(), handler);
+
         connectionsObject.send(handler.getId(), new ACK(new byte[]{0,0}).getAck());
     }
     

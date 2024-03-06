@@ -47,4 +47,23 @@ public class Util {
     public static String getOpcode(String command) {
         return command.split(" ")[0];
     }
+
+    public static byte[] padDataPacket(byte[] packet, int blockNumber){
+        byte[] res = new byte[packet.length + 6];
+        res[0] = 0;
+        res[1] = 3;
+
+        byte[] packetSizeBytes = Util.intToTwoByte(packet.length);
+        res[2] = packetSizeBytes[0];
+        res[3] = packetSizeBytes[1];
+
+        byte[] blockNumberBytes = Util.intToTwoByte(blockNumber);
+        res[4] = blockNumberBytes[0];
+        res[5] = blockNumberBytes[1];
+
+        for (int i = 0; i < packet.length; i++) {
+            res[i + 6] = packet[i];
+        }
+        return res;
+    }
 }

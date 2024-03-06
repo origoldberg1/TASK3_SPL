@@ -18,6 +18,10 @@ public class TftpConnections implements Connections<byte[]>{
     public boolean send(int connectionId, byte[] msg)  {
         // TODO Auto-generated method stub
         ConnectionHandler<byte[]> handler = connections.get(connectionId);
+        if(handler == null){
+            System.err.println("no handler for this id");
+            return false;
+        }
         handler.send(msg);
         return true;      
     }
