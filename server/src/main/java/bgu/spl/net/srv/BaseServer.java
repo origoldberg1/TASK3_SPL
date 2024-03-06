@@ -30,7 +30,7 @@ public abstract class BaseServer<T> implements Server<T> {
     @Override
     public void serve() {
 
-        TftpConnections connections = new TftpConnections();
+        Connections<T> connections = (Connections<T>) new TftpConnections();
 
         try (ServerSocket serverSock = new ServerSocket(port)) {
 			System.out.println("Server started");

@@ -5,12 +5,12 @@ import java.io.OutputStream;
 
 import bgu.spl.net.api.ClientCommand;
 
-public class LOGRQ implements ClientCommand{
+public class LOGRQClient implements ClientCommand{
     OutputStream outputStream;
     String userName;
 
     
-    public LOGRQ(OutputStream outputStream, String userName) {
+    public LOGRQClient(OutputStream outputStream, String userName) {
         this.outputStream = outputStream;
         this.userName = userName;
     }

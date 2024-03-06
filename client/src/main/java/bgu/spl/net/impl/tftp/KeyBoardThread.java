@@ -34,7 +34,7 @@ public class KeyBoardThread implements Runnable{
                         new WRQ(outputStream, filePath).execute();
                         break;
                     case 7:
-                        new LOGRQ(outputStream, userInput.split(" ")[1]).execute();
+                        new LOGRQClient(outputStream, userInput.split(" ")[1]).execute();
                         break;
 
                     default:

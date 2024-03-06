@@ -1,4 +1,5 @@
 package bgu.spl.net.impl.tftp;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import bgu.spl.net.srv.BlockingConnectionHandler;
 import bgu.spl.net.srv.ConnectionHandler;
@@ -30,14 +31,13 @@ public class TftpConnections implements Connections<byte[]>{
     }
 
     public boolean isExistByUserName(String userName){ //we add this method in order to check if this userName is already connected
-        for(int i=1; i<=connections.size(); i++)
-        {
-            if(connections.get(i).getName()!=null && (connections.get(i).getName()==userName))
+        for(Map.Entry<Integer, BlockingConnectionHandler<byte[]>> ch: connections.entrySet()){
+            if(ch.getValue().getName() != null &&ch.getValue().getName().equals(userName))
             {
-                return false;
+                  return true;                
             }
         }
-        return true;
+        return false;
     }
 
     public boolean isExistById(int id){ //we add this method in order to check if this userName is already connected

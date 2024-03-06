@@ -14,7 +14,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     private final MessagingProtocol<T> protocol;
     private final MessageEncoderDecoder<T> encdec;
     private final Socket sock;
-    private final TftpConnections connections;
+    private final Connections<T> connections;
     private BufferedInputStream in;
     private BufferedOutputStream out;
     private volatile boolean connected = true;
@@ -23,7 +23,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     private volatile String userName; //we add this
     private volatile String fileToWritePath; //we add it
 
-    public BlockingConnectionHandler(Socket sock, TftpConnections connections, MessageEncoderDecoder<T> reader, MessagingProtocol<T> protocol) {
+    public BlockingConnectionHandler(Socket sock, Connections<T> connections, MessageEncoderDecoder<T> reader, MessagingProtocol<T> protocol) {
         this.sock = sock;
         this.connections = connections;
         this.encdec = reader;
@@ -31,6 +31,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
         this.id=connectionCounter; //make sure with ori it is ok to increase connectionCounter just in run method
         this.userName=null; //we add it
         this.fileToWritePath=null; //we add it
+        this.connections.connect(connectionCounter, this);
 
     }
 
@@ -68,47 +69,40 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     }
 
     @Override
-    public synchronized void send(T msg) { //implement if needed
+    public synchronized void send(T msg){ //implement if needed
         try{
-        out = new BufferedOutputStream(sock.getOutputStream());
-        out.write(encdec.encode(msg));
-        out.flush();
+            out = new BufferedOutputStream(sock.getOutputStream());
+            out.write(encdec.encode(msg));
+            out.flush();
         }catch(IOException e){}
     }
 
-    public TftpConnections getConnectionsObject() //we add this method
-    {
+    public Connections<T> getConnectionsObject(){ //we add this method
         return connections;
     }
 
-    public int id() //we add this method
-    {
+    public int id(){ //we add this method
         return id;
     }
 
-    public String getName() //we add this method
-    {
+    public String getName(){ //we add this method
         return this.userName;
     }
 
-    public String setName(String userName) //we add this method
-    {
+    public String setName(String userName){ //we add this method
         return this.userName=userName;
     }
 
-    public int getId() //we add this method
-    {
+    public int getId(){ //we add this method
         return this.id;
     }
 
-    public String getFileToWritePath() //we add this method
-    {
+    public String getFileToWritePath(){ //we add this method
         return fileToWritePath;
     }
     
-     public void setFileToWritePath(String fileToWritePath)
-     {
-        this.fileToWritePath=fileToWritePath;
-     }
+    public void setFileToWritePath(String fileToWritePath){
+       this.fileToWritePath=fileToWritePath;
+    }
 
 }

@@ -4,7 +4,7 @@ import bgu.spl.net.srv.BlockingConnectionHandler;
 import bgu.spl.net.srv.ConnectionHandler;
 import bgu.spl.net.srv.Connections;
 
-public class TftpProtocol implements BidiMessagingProtocol<byte[]>  {
+public class TftpProtocol implements BidiMessagingProtocol <byte[]>  {
     
     private BlockingConnectionHandler <byte[]> handler;
     private TftpConnections connectionsObj;
@@ -12,13 +12,12 @@ public class TftpProtocol implements BidiMessagingProtocol<byte[]>  {
     
     
     @Override
-    public void start(int connectionId, TftpConnections connectionsObj, BlockingConnectionHandler <byte[]>  connectionHandler) {
+    public void start(int connectionId, Connections <byte[]> connections, ConnectionHandler <byte[]>  connectionHandler) {
         // TODO implement this
-        this.handler=connectionHandler;
-        this.connectionsObj=connectionsObj;
+        this.handler = (BlockingConnectionHandler<byte[]>) connectionHandler;
+        this.connectionsObj= (TftpConnections) connections;
         System.out.println("start");
         //throw new UnsupportedOperationException("Unimplemented method 'start'");
-
     }
 
     @Override
@@ -26,14 +25,11 @@ public class TftpProtocol implements BidiMessagingProtocol<byte[]>  {
         // TODO implement this
         System.out.println("process");
         if(message.length > 1){
-            if(message[1]!=7 && handler.getName()==null)
-            {
+            if(message[1] != 7 && handler.getName()==null){
                 connectionsObj.send(handler.getId(), new ERROR(6).getError());
             }
-            else
-            {
-                switch (message[1]) 
-                {
+            else{
+                switch (message[1]){
                     case 1:
                         new RRQ().execute(message, handler, connectionsObj);
                         break;
@@ -53,12 +49,10 @@ public class TftpProtocol implements BidiMessagingProtocol<byte[]>  {
                         new DELRQ().execute(message, handler, connectionsObj);
                         break;
                     case 10:
-                        if(handler.getName()==null)
-                        {
+                        if(handler.getName()==null){
                             setShouldTerminate();
                         }
-                        else //is logged in
-                        {
+                        else{ //is logged in
                             connectionsObj.send(handler.getId(), new ACK(new byte[]{0,0}).getAck());
                         }
                         break;
@@ -67,8 +61,7 @@ public class TftpProtocol implements BidiMessagingProtocol<byte[]>  {
                 }
             }
         }
-        connectionsObj.send(handler.getId(),new ERROR (4).getError()); 
-        //throw new UnsupportedOperationException("Unimplemented method 'process'");
+        //connectionsObj.send(handler.getId(),new ERROR (4).getError()); 
     }
 
     @Override
@@ -81,6 +74,5 @@ public class TftpProtocol implements BidiMessagingProtocol<byte[]>  {
     {
         shouldTerminate=true;
     }
-
 
 }

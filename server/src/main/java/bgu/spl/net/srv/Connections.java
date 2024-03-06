@@ -1,5 +1,4 @@
 package bgu.spl.net.srv;
-import java.util.concurrent.ConcurrentHashMap;
 
 public interface Connections<T> {
 
@@ -9,10 +8,10 @@ public interface Connections<T> {
 
     void disconnect(int connectionId);
 
-    boolean isExistByUserName(String userName); //we add this method
+    // boolean isExistByUserName(String userName); //we add this method
 
-    ConcurrentHashMap<Integer, BlockingConnectionHandler<byte[]>> getConnectionsHash(); //we add this method
+    // ConcurrentHashMap<Integer, BlockingConnectionHandler<byte[]>> getConnectionsHash(); //we add this method
 
-     boolean isExistById(int id);
+    //  boolean isExistById(int id);
 
 }
