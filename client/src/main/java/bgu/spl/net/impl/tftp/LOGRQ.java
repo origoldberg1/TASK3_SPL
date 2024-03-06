@@ -24,17 +24,14 @@ public class LOGRQ implements ClientCommand{
         msg[0] = 0;
         msg[1] = 7;
         int indent = 2;
-        for (int i = 0; i < msg.length - 1; i++) {
+        for (int i = 0; i < userNameBytes.length; i++) {
             msg[i + indent] = userNameBytes[i];
         }
         msg[msg.length - 1] = 0;
         try {
             outputStream.write(msg);
             outputStream.flush();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        } catch (IOException e) {}
     }
 
 

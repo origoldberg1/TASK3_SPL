@@ -36,16 +36,22 @@ public class TftpProtocol implements BidiMessagingProtocol<byte[]>  {
                 {
                     case 1:
                         new RRQ().execute(message, handler, connectionsObj);
+                        break;
                     case 2:
                         new WRQ().execute(message, handler, connectionsObj);
+                        break;
                     case 3:
-                        new DATA().execute(message, handler, connectionsObj);                    
+                        new DATA().execute(message, handler, connectionsObj);   
+                        break;                 
                     case 6:
                         new DIRQ().execute(message, handler, connectionsObj);
+                        break;
                     case 7:
                         new LOGRQ().execute(message, handler, connectionsObj);
+                        break;
                     case 8:
                         new DELRQ().execute(message, handler, connectionsObj);
+                        break;
                     case 10:
                         if(handler.getName()==null)
                         {
@@ -55,6 +61,7 @@ public class TftpProtocol implements BidiMessagingProtocol<byte[]>  {
                         {
                             connectionsObj.send(handler.getId(), new ACK(new byte[]{0,0}).getAck());
                         }
+                        break;
                     default:
                         connectionsObj.send(handler.getId(),new ERROR (4).getError());
                 }

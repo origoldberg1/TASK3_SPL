@@ -11,6 +11,11 @@ public class WRQ implements ClientCommand{
     OutputStream outputStream;
     Path filePath;
 
+    public WRQ(OutputStream outputStream, Path filePath) {
+        this.outputStream = outputStream;
+        this.filePath = filePath;
+    }
+
     @Override
     public void execute() {
         //Path filePath = Paths.get(System.getProperty("user.dir")).resolve("client").resolve(getFileName(userInput));

@@ -11,9 +11,10 @@ public class LOGRQ implements Command<byte[]>
         // TODO Auto-generated method stub
         //extracting userName
         byte [] bytesUserName= new byte[arg.length-2];//acording to Ori we get args without the last byte 
-        for(int i=2; i<arg.length-2; i++)
+        int indent = 2;
+        for(int i = 0; i < arg.length; i++)
         {
-            bytesUserName[i-2]=arg[i];
+            bytesUserName[i]=arg[i+2];
         }
         String userName = new String(bytesUserName, StandardCharsets.UTF_8);
         if(connectionsObject.isExistByUserName(userName))// if there is such userName it means someone with this name is already logged in

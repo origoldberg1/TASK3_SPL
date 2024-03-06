@@ -9,14 +9,12 @@ public class TftpConnections implements Connections<byte[]>{
 
     @Override
     public boolean connect(int connectionId, BlockingConnectionHandler<byte[]> handler) {
-        // TODO Auto-generated method stub
         connections.put(connectionId, handler);
         return true;
     }
 
     @Override
     public boolean send(int connectionId, byte[] msg)  {
-        // TODO Auto-generated method stub
         ConnectionHandler<byte[]> handler = connections.get(connectionId);
         if(handler == null){
             System.err.println("no handler for this id");
@@ -27,13 +25,11 @@ public class TftpConnections implements Connections<byte[]>{
     }
 
     @Override
-    public void disconnect(int connectionId) //we didn't use this method
-    {
+    public void disconnect(int connectionId){ //we didn't use this method
         connections.remove(connectionId);
     }
 
-    public boolean isExistByUserName(String userName) //we add this method in order to check if this userName is already connected
-    {
+    public boolean isExistByUserName(String userName){ //we add this method in order to check if this userName is already connected
         for(int i=1; i<=connections.size(); i++)
         {
             if(connections.get(i).getName()!=null && (connections.get(i).getName()==userName))
@@ -44,13 +40,11 @@ public class TftpConnections implements Connections<byte[]>{
         return true;
     }
 
-    public boolean isExistById(int id) //we add this method in order to check if this userName is already connected
-    {
+    public boolean isExistById(int id){ //we add this method in order to check if this userName is already connected
         return connections.containsKey(id);
     }
 
-    public  ConcurrentHashMap<Integer, BlockingConnectionHandler<byte[]>> getConnectionsHash()
-    {
+    public  ConcurrentHashMap<Integer, BlockingConnectionHandler<byte[]>> getConnectionsHash(){
         return connections;
     } 
 
