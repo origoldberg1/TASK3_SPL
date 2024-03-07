@@ -73,7 +73,7 @@ public class Util {
         res[1] = opcode;
         res[res.length - 1] = 0;
         int indent = 2;
-        for (int i = 0; i < res.length; i++) {
+        for (int i = 0; i < packet.length; i++) {
             res[i + indent] = packet[i];
         }
         return res;
@@ -87,4 +87,10 @@ public class Util {
         } 
         return fileName;
      }
+
+    
+    public static int getOpcode(byte[] msg){
+        return msg[1];
+    }
+
 }

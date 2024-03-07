@@ -28,31 +28,29 @@ public class WRQ implements Command{
             outputStream.flush();
             System.out.println("keyboard thread: sending WRQ");
         } catch (IOException e) {}
-        synchronized(TftpClient.waitOnObject){
-            try {
-                TftpClient.waitOnObject.wait();
-            } catch (InterruptedException e) {}
-        }
-        
-
-        
-        SendData sendData = new SendData(filePath);
-        int blockNumber = 0;
-        do{
-            packet = sendData.makePacket(blockNumber);
-            try {
-                outputStream.write(Util.padDataPacket(packet, blockNumber));
-                outputStream.flush();
-                System.out.println("keyboard thread: sending packet number " + blockNumber);
-                synchronized(TftpClient.waitOnObject){
-                    try {
-                        TftpClient.waitOnObject.wait();
-                    } catch (InterruptedException e) {}
-                }
-
-            } catch (IOException e) {}
-            blockNumber ++;
-        }   
-        while(packet.length == 512);    }
-
+    }
 }
+        
+
+        
+    //     SendData sendData = new SendData(filePath);
+    //     int blockNumber = 0;
+    //     do{
+    //         packet = sendData.makePacket(blockNumber);
+    //         try {
+    //             outputStream.write(Util.padDataPacket(packet, blockNumber));
+    //             outputStream.flush();
+    //             System.out.println("keyboard thread: sending packet number " + blockNumber);
+    //             synchronized(TftpClient.waitOnObject){
+    //                 try {
+    //                     TftpClient.waitOnObject.wait();
+    //                 } catch (InterruptedException e) {}
+    //             }
+
+    //         } catch (IOException e) {}
+    //         blockNumber ++;
+    //     }   
+    //     while(packet.length == 512);    
+    // }
+
+

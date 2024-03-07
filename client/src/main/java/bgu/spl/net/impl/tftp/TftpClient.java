@@ -17,11 +17,12 @@ public class TftpClient {
             Socket sock = new Socket(args[0], 7777);
             InputStream in = sock.getInputStream();
             OutputStream out = sock.getOutputStream();
+            CurrentCommand currentCommand = new CurrentCommand();
 
             //final BlockingQueue<String> commandQueue = new ArrayBlockingQueue<>(100);
             final CommandParser commandParser = new CommandParser();
-            final KeyBoardThread keyBoradThread = new KeyBoardThread(commandParser, out);
-            final ListeningThread listeningThread = new ListeningThread(in);
+            final KeyBoardThread keyBoradThread = new KeyBoardThread(commandParser, out, currentCommand);
+            final ListeningThread listeningThread = new ListeningThread(in, currentCommand);
             //final CommandProccessorThread commandProccessorThread = new CommandProccessorThread(commandQueue, commandParser, out);
 
             new Thread(keyBoradThread).start();

@@ -1,6 +1,7 @@
 package bgu.spl.net.impl.tftp;
 import java.math.*;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -9,8 +10,10 @@ import bgu.spl.net.api.MessageEncoderDecoder;
 public class SendData {
     byte[] fileBytes;
     int defaultPacketSize = 512;
+    int blockNumber = 0;
+    OutputStream outputStream;
 
-    public SendData(Path filePath){
+    public SendData(Path filePath, OutputStream outputStream){
         try {
             fileBytes = Files.readAllBytes(filePath);
             int numOfPackets = (int) Math.ceil((double) fileBytes.length / defaultPacketSize);
@@ -18,13 +21,14 @@ public class SendData {
         } catch (IOException e) {
             System.err.println("cannot convert file to byte[]");
         }
+        this.outputStream = outputStream;
     }
 
-    public byte[] makePacket(int n){
-        if(n * defaultPacketSize > fileBytes.length) {
+    public byte[] makePacket(){
+        if(blockNumber * defaultPacketSize > fileBytes.length) {
             return null;
         }
-        int indent = n * defaultPacketSize;
+        int indent = blockNumber * defaultPacketSize;
         int i = 0;
         byte[] packet = new byte[defaultPacketSize];
         while(i < packet.length && (indent + i) < fileBytes.length){
@@ -37,6 +41,20 @@ public class SendData {
         return packet;
     }
 
+    public boolean sendPacket(){
+        byte[] packet = makePacket();
+        if(packet == null) {return false;}
+        try {
+            outputStream.write(Util.padDataPacket(packet, blockNumber));
+            outputStream.flush();
+            System.out.println("keyboard thread: sending packet number " + blockNumber);
+
+        } catch (IOException e) {}
+        blockNumber ++;
+        return true;
+    }
+
+
     private byte[] trim(byte[] packet, int len){
         byte[] tmp = new byte[len];
         for (int i = 0; i < tmp.length; i++) {
@@ -44,4 +62,5 @@ public class SendData {
         }
         return tmp;
     }
+
 }

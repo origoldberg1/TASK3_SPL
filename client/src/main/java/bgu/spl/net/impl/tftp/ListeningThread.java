@@ -10,14 +10,14 @@ public class ListeningThread implements Runnable{
 
     private boolean terminate = false;
     private InputStream inputStream;
-    private BlockingQueue<String> commandQueue;
     private MessageEncoderDecoder<byte[]> encdec;
+    CurrentCommand currentCommand;
 
     
-    public ListeningThread(InputStream inputStream) {
+    public ListeningThread(InputStream inputStream, CurrentCommand currentCommand) {
         this.inputStream = inputStream;
-        this.commandQueue = commandQueue;
         this.encdec = new TftpClientEncoderDecoder();
+        this.currentCommand = currentCommand;
     }
 
 
@@ -33,14 +33,15 @@ public class ListeningThread implements Runnable{
                     for (int i = 0; i < nextMessage.length; i++){
                         System.err.println(i + ": " + nextMessage[i]);
                     }
-                    if(nextMessage[0] == 0 && nextMessage[1] == 4){
-                        System.out.println("lisening thread: receiving ack number " + Util.twoByteToInt(new byte[]{nextMessage[2], nextMessage[3]}));
-                        synchronized(TftpClient.waitOnObject){
-                            TftpClient.waitOnObject.notifyAll();
+                    if(Util.getOpcode(nextMessage) == 4 && currentCommand.getState().equals(STATE.Writing)){
+                        if(!currentCommand.getSendData().sendPacket()){
+                            currentCommand.setState(STATE.Unoccupied);
                         }
                     }
+                        System.out.println("lisening thread: receiving ack number " + Util.twoByteToInt(new byte[]{nextMessage[2], nextMessage[3]}));
+
+                    }
                 }
-            }
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -48,3 +49,4 @@ public class ListeningThread implements Runnable{
     }
     
 }
+

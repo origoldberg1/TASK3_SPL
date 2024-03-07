@@ -1,11 +1,9 @@
 package bgu.spl.net.impl.tftp;
 
-import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Scanner;
-import java.util.concurrent.BlockingQueue;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Scanner;
 
 public class KeyBoardThread implements Runnable{
 
@@ -13,12 +11,14 @@ public class KeyBoardThread implements Runnable{
     Util.State state = Util.State.Simple; 
     CommandParser commandParser;
     OutputStream outputStream;
+    CurrentCommand currentCommand;
 
 
     
-    public KeyBoardThread(CommandParser commandParser, OutputStream outputStream) {
+    public KeyBoardThread(CommandParser commandParser, OutputStream outputStream, CurrentCommand currentCommand) {
         this.commandParser = commandParser;
         this.outputStream = outputStream;
+        this.currentCommand = currentCommand;
     }
 
     @Override
@@ -32,7 +32,10 @@ public class KeyBoardThread implements Runnable{
                     case 2:
                         String fileName = Util.getFileName(userInput);
                         Path filePath = Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName);
-                        new WRQ(outputStream, filePath, fileName).execute();
+                        currentCommand.setFilePath(filePath);
+                        currentCommand.setState(STATE.Writing);
+                        currentCommand.setSendData(new SendData(filePath, outputStream));
+                        new WRQ(outputStream, filePath, fileName).execute(); 
                         break;
                     case 6:
                         new DIRQ(outputStream).execute();
