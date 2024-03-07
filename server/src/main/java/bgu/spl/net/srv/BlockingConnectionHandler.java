@@ -55,7 +55,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
                     // }
                 }
             }
-
+            close();
         } catch (IOException ex) { 
             ex.printStackTrace();
         }
@@ -101,8 +101,12 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
         return fileToWritePath;
     }
     
-    public void setFileToWritePath(String fileToWritePath){
+    public synchronized void setFileToWritePath(String fileToWritePath){
        this.fileToWritePath=fileToWritePath;
     }
 
+    public MessagingProtocol<T> getProtocol() //we add that
+    {
+        return protocol;
+    }
 }
