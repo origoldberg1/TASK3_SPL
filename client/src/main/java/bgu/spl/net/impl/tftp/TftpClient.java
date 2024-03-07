@@ -18,6 +18,7 @@ public class TftpClient {
             InputStream in = sock.getInputStream();
             OutputStream out = sock.getOutputStream();
             CurrentCommand currentCommand = new CurrentCommand();
+            currentCommand.setState(STATE.Unoccupied);
 
             //final BlockingQueue<String> commandQueue = new ArrayBlockingQueue<>(100);
             final CommandParser commandParser = new CommandParser();
