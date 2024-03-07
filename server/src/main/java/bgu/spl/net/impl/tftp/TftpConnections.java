@@ -1,6 +1,8 @@
 package bgu.spl.net.impl.tftp;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import bgu.spl.net.api.BidiMessagingProtocol;
 import bgu.spl.net.srv.BlockingConnectionHandler;
 import bgu.spl.net.srv.ConnectionHandler;
 import bgu.spl.net.srv.Connections;
@@ -27,7 +29,9 @@ public class TftpConnections implements Connections<byte[]>{
 
     @Override
     public void disconnect(int connectionId){ //we didn't use this method
+        BlockingConnectionHandler handlerToDisc=connections.get(connectionId);
         connections.remove(connectionId);
+        ((TftpProtocol)handlerToDisc.getProtocol()).setShouldTerminate(); //in order to finish procees gracefully
     }
 
     public boolean isExistByUserName(String userName){ //we add this method in order to check if this userName is already connected
