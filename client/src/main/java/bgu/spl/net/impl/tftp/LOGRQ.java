@@ -3,14 +3,14 @@ package bgu.spl.net.impl.tftp;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import bgu.spl.net.api.ClientCommand;
+import bgu.spl.net.api.Command;
 
-public class LOGRQClient implements ClientCommand{
+public class LOGRQ implements Command{
     OutputStream outputStream;
     String userName;
 
     
-    public LOGRQClient(OutputStream outputStream, String userName) {
+    public LOGRQ(OutputStream outputStream, String userName) {
         this.outputStream = outputStream;
         this.userName = userName;
     }

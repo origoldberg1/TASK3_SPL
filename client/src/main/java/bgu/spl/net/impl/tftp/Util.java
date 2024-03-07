@@ -66,4 +66,25 @@ public class Util {
         }
         return res;
     }
+
+    public static byte[] padPacketEndZero(byte opcode, byte[] packet){
+        byte[] res = new byte[packet.length + 3];
+        res[0] = 0;
+        res[1] = opcode;
+        res[res.length - 1] = 0;
+        int indent = 2;
+        for (int i = 0; i < res.length; i++) {
+            res[i + indent] = packet[i];
+        }
+        return res;
+    }
+
+    public static String getFileName(String userInput){
+        String[] splitUserInput = userInput.split(" ");
+        String fileName = splitUserInput[1];
+        for (int i = 2; i < splitUserInput.length; i++) {
+             fileName = fileName  + " " + splitUserInput[i];
+        } 
+        return fileName;
+     }
 }

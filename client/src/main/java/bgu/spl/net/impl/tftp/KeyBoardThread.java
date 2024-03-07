@@ -30,11 +30,18 @@ public class KeyBoardThread implements Runnable{
                 String userInput = scanner.nextLine();
                 switch (Util.getOpcodeValue(userInput.split(" ")[0])){
                     case 2:
-                        Path filePath = Paths.get(System.getProperty("user.dir")).resolve("client").resolve(getFileName(userInput));
-                        new WRQ(outputStream, filePath).execute();
+                        String fileName = Util.getFileName(userInput);
+                        Path filePath = Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName);
+                        new WRQ(outputStream, filePath, fileName).execute();
+                        break;
+                    case 6:
+                        new DIRQ(outputStream).execute();
                         break;
                     case 7:
-                        new LOGRQClient(outputStream, userInput.split(" ")[1]).execute();
+                        new LOGRQ(outputStream, userInput.split(" ")[1]).execute();
+                        break;
+                    case 10:
+                        new DISC(outputStream).execute();
                         break;
 
                     default:
@@ -48,12 +55,5 @@ public class KeyBoardThread implements Runnable{
 
 
 
-    private String getFileName(String userInput){
-       String[] splitUserInput = userInput.split(" ");
-       String fileName = splitUserInput[1];
-       for (int i = 2; i < splitUserInput.length; i++) {
-            fileName = fileName  + " " + splitUserInput[i];
-       } 
-       return fileName;
-    }
+
 }
