@@ -1,5 +1,7 @@
 package bgu.spl.net.impl.tftp;
 import java.math.*;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -13,14 +15,25 @@ public class SendData {
     int blockNumber = 0;
     OutputStream outputStream;
 
-    public SendData(Path filePath, OutputStream outputStream){
+    public SendData(OutputStream outputStream, String fileFullPath){
+
         try {
-            fileBytes = Files.readAllBytes(filePath);
-            int numOfPackets = (int) Math.ceil((double) fileBytes.length / defaultPacketSize);
-            System.out.println("num of packets= " + numOfPackets);
+            fileBytes = Util.readFile(fileFullPath);
         } catch (IOException e) {
-            System.err.println("cannot convert file to byte[]");
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+            //extracting file size (in bytes)
+            //reads all data to buffer
+
+
+        // try {
+        //     fileBytes = Files.readAllBytes(filePath);
+        //     int numOfPackets = (int) Math.ceil((double) fileBytes.length / defaultPacketSize);
+        //     System.out.println("num of packets= " + numOfPackets);
+        // } catch (IOException e) {
+        //     System.err.println("cannot convert file to byte[]");
+        // }
         this.outputStream = outputStream;
     }
 

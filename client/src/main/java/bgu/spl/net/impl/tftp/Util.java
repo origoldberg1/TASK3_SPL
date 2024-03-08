@@ -1,5 +1,11 @@
 package bgu.spl.net.impl.tftp;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 public class Util {
 
     enum State {
@@ -91,6 +97,24 @@ public class Util {
     
     public static int getOpcode(byte[] msg){
         return msg[1];
+    }
+
+    public static byte[] readFile(String fileFullPath) throws IOException {
+        FileInputStream fis = new FileInputStream(fileFullPath);
+        //extracting file size (in bytes)
+        long fileSize= new File(fileFullPath).length();
+        //reads all data to buffer
+        byte[] fileBytes = new byte[(int) fileSize];
+        fis.read(fileBytes);
+        fis.close();
+        return fileBytes;
+    }
+
+    public static void writeFile(String fileName, byte[] bytes) throws FileNotFoundException, IOException {
+        try (FileOutputStream fos = new FileOutputStream(fileName)) {
+            fos.write(bytes);
+            fos.close(); // There is no more need for this line since you had created the instance of "fos" inside the try. And this will automatically close the OutputStream
+        }
     }
 
 }

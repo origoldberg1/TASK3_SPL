@@ -98,3 +98,4 @@ hs_err_pid*
 
 server/target
 client/target
+client/src/main/java/bgu/spl/net/impl/tftp/main.java

@@ -34,7 +34,7 @@ public class KeyBoardThread implements Runnable{
                         Path filePath = Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName);
                         currentCommand.setFilePath(filePath);
                         currentCommand.setState(STATE.Writing);
-                        currentCommand.setSendData(new SendData(filePath, outputStream));
+                        currentCommand.setSendData(new SendData(outputStream, filePath.toString()));
                         new WRQ(outputStream, filePath, fileName).execute(); 
                         break;
                     case 6:
