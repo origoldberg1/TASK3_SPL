@@ -70,7 +70,4 @@ public class TftpClient {
             // System.out.println("message from server: " + response);
         }
     }
-
-
-
 }
