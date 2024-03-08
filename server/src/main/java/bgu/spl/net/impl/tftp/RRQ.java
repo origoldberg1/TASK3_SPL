@@ -1,4 +1,6 @@
 package bgu.spl.net.impl.tftp;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -62,20 +64,21 @@ public class RRQ implements Command<byte[]>
             String fileName = new String(bytesFileName, StandardCharsets.UTF_8);
             //reading file 
             byte [] dataByte=new byte[0];  
-            try{
-                Path filePath = Paths.get("server/Flies"+fileName); 
-                dataByte = Files.readAllBytes(filePath);
-            }catch(IOException e){connectionsObject.send(handler.getId(),new ERROR(1).getError());}
+            try(FileInputStream fis = new FileInputStream("server/Files/" + fileName)){
+                //extracting file size (in bytes)
+                long fileSize= new File("server/Files/" + fileName).length();
+                //reads all data to buffer
+                dataByte = new byte[(int) fileSize];
+                fis.read(dataByte);
+            }catch(IOException e){}
             //creating new HoldsdataToSend object
-            if(dataByte.length!=0)
-            {
-                HoldsDataToSend dataToSend=new HoldsDataToSend(connectionsObject, dataByte, handler);
-                //updating protocol to hold dataToSend object
-                ((TftpProtocol)handler.getProtocol()).setHoldsDataToSend(dataToSend);
-                //sending first packet
-                byte[] blockNumber= new byte[] {0,0};
-                dataToSend.sendPacket(new ACK(blockNumber).getAck()); //note- there is no meaning for the blockNumber field type in sendPacket method 
-            }
+            HoldsDataToSend dataToSend=new HoldsDataToSend(connectionsObject, dataByte, handler);
+            //updating protocol to hold dataToSend object
+            ((TftpProtocol)handler.getProtocol()).setHoldsDataToSend(dataToSend);
+            //sending first packet
+            byte[] blockNumber= new byte[] {0,0};
+            dataToSend.sendPacket(new ACK(blockNumber).getAck()); //note- there is no meaning for the blockNumber field type in sendPacket method 
+            
         }
     }
 }
