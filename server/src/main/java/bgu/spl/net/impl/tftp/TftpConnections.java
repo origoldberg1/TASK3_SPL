@@ -17,7 +17,7 @@ public class TftpConnections implements Connections<byte[]>{
     }
 
     @Override
-    public boolean send(int connectionId, byte[] msg)  {
+    public synchronized boolean send(int connectionId, byte[] msg)  {
         ConnectionHandler<byte[]> handler = connections.get(connectionId);
         if(handler == null){
             System.err.println("no handler for this id");
@@ -34,7 +34,7 @@ public class TftpConnections implements Connections<byte[]>{
         ((TftpProtocol)handlerToDisc.getProtocol()).setShouldTerminate(); //in order to finish procees gracefully
     }
 
-    public boolean isExistByUserName(String userName){ //we add this method in order to check if this userName is already connected
+    public synchronized boolean isExistByUserName(String userName){ //we add this method in order to check if this userName is already connected
         for(Map.Entry<Integer, BlockingConnectionHandler<byte[]>> ch: connections.entrySet()){
             if(ch.getValue().getName() != null &&ch.getValue().getName().equals(userName))
             {
@@ -44,13 +44,18 @@ public class TftpConnections implements Connections<byte[]>{
         return false;
     }
 
-    public boolean isExistById(int id){ //we add this method in order to check if this userName is already connected
+    public synchronized boolean isExistById(int id){ //we add this method in order to check if this userName is already connected
         return connections.containsKey(id);
     }
 
-    public  ConcurrentHashMap<Integer, BlockingConnectionHandler<byte[]>> getConnectionsHash(){
+    public synchronized ConcurrentHashMap<Integer, BlockingConnectionHandler<byte[]>> getConnectionsHash(){
         return connections;
-    } 
+    }
+
+    public synchronized ConcurrentHashMap<Integer, BlockingConnectionHandler<byte[]>> getCopyHashMap()
+    {
+        return new ConcurrentHashMap<>(connections);
+    }
 
     // public void bcast(byte [] fileNameinBytes, String fileNameString, byte deletedOrAdded) //deleteOrAdded hold (byte)0x00 if the file was deleted, otherwise (byte)0x01
     // {

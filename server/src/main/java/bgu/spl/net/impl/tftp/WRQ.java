@@ -63,11 +63,10 @@ public class WRQ implements Command<byte[]>
                 //starting broadcast
                 BCAST bcast = new BCAST(bytesFileName, (byte)0x01);
                 byte [] bcastMsg= bcast.getBcastMsg();
-                ConcurrentHashMap <Integer, BlockingConnectionHandler<byte[]>> connectionsHash =connectionsObject.getConnectionsHash();
-                ConcurrentHashMap<Integer, BlockingConnectionHandler<byte[]>> copyConnectionsHash = new ConcurrentHashMap<>(connectionsHash);
-                for(int i=0; i<copyConnectionsHash.size(); i++)
+                ConcurrentHashMap <Integer, BlockingConnectionHandler<byte[]>> connectionsHash =connectionsObject.getCopyHashMap();                
+                for(int i=0; i<connectionsHash.size(); i++)
                 {
-                    BlockingConnectionHandler <byte []> ch=copyConnectionsHash.get(i);
+                    BlockingConnectionHandler <byte []> ch=connectionsHash.get(i);
                     if(ch.getName()!=null) //means this CH is logged in
                     {
                         int id=ch.getId();
