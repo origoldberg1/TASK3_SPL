@@ -9,12 +9,10 @@ import bgu.spl.net.api.Command;
 
 public class WRQ implements Command{
     OutputStream outputStream;
-    Path filePath;
     String fileName;
 
-    public WRQ(OutputStream outputStream, Path filePath, String fileName) {
+    public WRQ(OutputStream outputStream, String fileName) {
         this.outputStream = outputStream;
-        this.filePath = filePath;
         this.fileName = fileName;
     }
 
@@ -26,7 +24,6 @@ public class WRQ implements Command{
         try {
             outputStream.write(packet);
             outputStream.flush();
-            System.out.println("keyboard thread: sending WRQ");
         } catch (IOException e) {}
     }
 }

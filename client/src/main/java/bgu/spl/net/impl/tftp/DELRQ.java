@@ -5,17 +5,21 @@ import java.io.OutputStream;
 
 import bgu.spl.net.api.Command;
 
-public class DISC implements Command{
+public class DELRQ implements Command{
     OutputStream outputStream;
+    String fileName;
 
-    public DISC(OutputStream outputStream) {
+    public DELRQ(OutputStream outputStream, String fileName) {
         this.outputStream = outputStream;
+        this.fileName = fileName;
     }
 
     @Override
     public void execute() {
+        byte[] fileNameBytes = fileName.getBytes(); 
+        byte[] msg = Util.padPacketEndZero((byte)8, fileNameBytes);
         try {
-            outputStream.write(new byte[]{0,10});
+            outputStream.write(msg);
             outputStream.flush();
         } catch (IOException e) {}
     }

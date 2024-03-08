@@ -3,8 +3,11 @@ package bgu.spl.net.impl.tftp;
 import java.nio.file.Path;
 
 enum STATE{
-    Reading,
-    Writing,
+    RRQ,
+    WRQ,
+    DIRQ,
+    LOGRQ,
+    DELERQ,
     Unoccupied
 }
 
@@ -12,7 +15,9 @@ public class CurrentCommand {
     private Path filePath;
     private STATE state;
     private SendData sendData;
+    private ReceiveData receiveData;
     
+
     public synchronized Path getFilePath() {
         return filePath;
     }
@@ -35,6 +40,14 @@ public class CurrentCommand {
 
     public synchronized void setSendData(SendData sendData) {
         this.sendData = sendData;
+    }
+
+    public ReceiveData getReceiveData() {
+        return receiveData;
+    }
+
+    public void setReceiveData(ReceiveData receiveData) {
+        this.receiveData = receiveData;
     }
 
 }

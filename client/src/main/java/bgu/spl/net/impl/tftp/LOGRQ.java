@@ -18,16 +18,7 @@ public class LOGRQ implements Command{
 
     @Override
     public void execute() {
-        // TODO Auto-generated method stub
-        byte[] userNameBytes = userName.getBytes(); 
-        byte[] msg = new byte[userNameBytes.length + 3];
-        msg[0] = 0;
-        msg[1] = 7;
-        int indent = 2;
-        for (int i = 0; i < userNameBytes.length; i++) {
-            msg[i + indent] = userNameBytes[i];
-        }
-        msg[msg.length - 1] = 0;
+        byte[] msg = Util.padPacketEndZero((byte)7, userName.getBytes());
         try {
             outputStream.write(msg);
             outputStream.flush();

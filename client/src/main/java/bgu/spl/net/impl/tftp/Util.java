@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class Util {
 
@@ -94,6 +95,14 @@ public class Util {
              fileName = fileName  + " " + splitUserInput[i];
         } 
         return fileName;
+     }
+
+     public static String extractString(byte[] msg, int indent){
+        byte[] fileNameBytes = new byte[msg.length - 4];
+        for (int i = 0; i < fileNameBytes.length; i++) {
+            fileNameBytes[i] = msg[i + indent];
+        }
+        return new String(fileNameBytes, StandardCharsets.UTF_8);
      }
 
     

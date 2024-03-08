@@ -49,8 +49,6 @@ public class CommandParser {
         return res;
     }
 
-
-
     private boolean addZero(byte opcode){
         return (opcode == 1 || opcode == 2 || opcode == 5 || opcode == 7 || opcode == 8 || opcode == 9);
     }
