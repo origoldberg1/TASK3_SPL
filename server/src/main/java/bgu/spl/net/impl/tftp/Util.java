@@ -33,12 +33,9 @@ public class Util {
 
         try{
             FileOutputStream fos = new FileOutputStream(fileFullPath);
-            System.out.println("line 1 in writeFile passed");
             fos.write(bytes);
-            System.out.println("line 2 in writeFile passed");
             fos.close();
-            System.out.println("line 3 in writeFile passed");
-        }catch(IOException e){ System.out.println("cannot write");}
+        }catch(IOException e){}
     }
 
     public static byte [] convertListToArr( List<Byte> byteList)

@@ -59,7 +59,6 @@ public class HoldsDataToWrite implements Command<byte[]> {
     {
         if(!errorFound(packet, handler, connectionsObject))
         {  
-            System.out.println("no Error");
             for (int i=0; i<packet.length-6; i++) {
                 byteList.add(packet[i+6]); //data information starts at sixth cell in Data Opcode
             }
