@@ -1,25 +1,36 @@
 package bgu.spl.net.impl.tftp;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 public class ReceiveData {
-    int n; 
+    int blockNumber; 
     byte[] data;
-    int defaultPacketSize = 512;
+    final int DEFAULT_PACKET_SIZE = 512;
+    final String fileName;
     
     
-    public ReceiveData() {
-        this.n = 0;
+    public ReceiveData(String fileName) {
+        this.blockNumber = 0;
         this.data = new byte[0];
+        this.fileName = fileName;
     }
 
-    public byte[] processPacket(byte[] packet){
+    public boolean processPacket(byte[] packet){
+        packet = extractData(packet);
         int indent = data.length;
         resize(packet.length);
         for (int i = 0; i < packet.length; i++) {
             data[indent + i] = packet[i];
         }
-        if(packet.length < defaultPacketSize) {return data;} //save file instead?
-        n++;
-        return null;
+        if(packet.length < DEFAULT_PACKET_SIZE) {
+            try {
+                Util.writeFile(fileName, data);
+            } catch (FileNotFoundException e) {} catch (IOException e) {}
+            return false;
+        }
+        blockNumber ++;
+        return true;
     }
     
     private void resize(int addSize){
@@ -28,5 +39,14 @@ public class ReceiveData {
             tmp[i] = data[i];
         }
         data = tmp;
+    }
+
+    private byte[] extractData(byte[] packet){
+        byte[] res = new byte[packet.length - 2];
+        int indent = 2;
+        for (int i = 0; i < res.length; i++) {
+            res[i] = packet[i+indent];
+        }
+        return res;
     }
 }

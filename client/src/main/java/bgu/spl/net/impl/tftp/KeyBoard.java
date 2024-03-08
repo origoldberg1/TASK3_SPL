@@ -5,17 +5,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
-public class KeyBoardThread implements Runnable{
+import bgu.spl.net.api.Command;
 
+public class KeyBoard implements Runnable{
     boolean terminate = false;
     Util.State state = Util.State.Simple; 
     CommandParser commandParser;
     OutputStream outputStream;
     CurrentCommand currentCommand;
 
-
     
-    public KeyBoardThread(CommandParser commandParser, OutputStream outputStream, CurrentCommand currentCommand) {
+    public KeyBoard(CommandParser commandParser, OutputStream outputStream, CurrentCommand currentCommand) {
         this.commandParser = commandParser;
         this.outputStream = outputStream;
         this.currentCommand = currentCommand;
@@ -25,32 +25,40 @@ public class KeyBoardThread implements Runnable{
     public void run() {
         // TODO Auto-generated method stub
         Scanner scanner = new Scanner(System.in);
+        String fileName;
         while (! terminate) {
             if (scanner.hasNextLine()) {
                 String userInput = scanner.nextLine();
+                Command command = new DIRQ(outputStream); //for compilition purpose
                 switch (Util.getOpcodeValue(userInput.split(" ")[0])){
+                    case 1:
+                        fileName = Util.getFileName(userInput);
+                        command = new RRQ(outputStream, fileName, currentCommand);
+                        break;
                     case 2:
-                        String fileName = Util.getFileName(userInput);
+                        fileName = Util.getFileName(userInput);
                         Path filePath = Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName);
                         currentCommand.setFilePath(filePath);
-                        currentCommand.setState(STATE.Writing);
+                        currentCommand.setState(STATE.WRQ);
                         currentCommand.setSendData(new SendData(outputStream, filePath.toString()));
-                        new WRQ(outputStream, filePath, fileName).execute(); 
+                        command = new WRQ(outputStream, fileName); 
                         break;
                     case 6:
-                        new DIRQ(outputStream).execute();
+                        command = new DIRQ(outputStream);
                         break;
                     case 7:
-                        new LOGRQ(outputStream, userInput.split(" ")[1]).execute();
+                        command = new LOGRQ(outputStream, userInput.split(" ")[1]);
+                        break;
+                    case 8:
+                        command = new DELRQ(outputStream, Util.getFileName(userInput));
                         break;
                     case 10:
                         new DISC(outputStream).execute();
                         break;
-
                     default:
-                        break;
+                        break; //TODO: check what to do in this case
                 }
-                    
+                command.execute();
             }
         }
         scanner.close();

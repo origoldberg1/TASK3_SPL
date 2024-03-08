@@ -44,29 +44,24 @@ public class HoldsDataToSend
         {
             int firstIndex=(block-1)*PACKET_SIZE;
             int leftBytes=dataToSend.length-(block-1)*PACKET_SIZE;
-            if(leftBytes==0)
-            {
+            if(leftBytes==0){
                 sendEmptyPacket();
                 leftBytes=-1; 
             }
-            if(leftBytes>0)
-            {
-               
+            if(leftBytes>0){
                 List<Byte> byteList = new ArrayList<>();
                 byte [] packetArr;
                 byteList.add((byte)0); //filling opcode field
                 byteList.add((byte)3); //filling opcode field
                 byteList.add((byte)0); //filling first byte of packet size 
-                if(leftBytes<PACKET_SIZE)
-                {
+                if(leftBytes<PACKET_SIZE){
                     byteList.add((byte)leftBytes); //filling second byte of packet size field
                 }
-                else
-                {
+                else{
                     byteList.add((byte)PACKET_SIZE); //filling second byte of packet size field
                 } 
                 //filling block field
-                byte [] blockField=Util.intToByte2(block);
+                byte [] blockField=Util.intToTwoByte(block);
                 byteList.add(blockField[0]);
                 byteList.add(blockField[1]);
                 //filling data field
@@ -93,7 +88,7 @@ public class HoldsDataToSend
 
     public void sendEmptyPacket()
     {
-        byte [] blockField=Util.intToByte2(block);
+        byte [] blockField=Util.intToTwoByte(block);
         byte [] emptyPacket= new byte[] {0,0,0,0,blockField[0], blockField[1]};
         connectionsObj.send(handler.getId(), emptyPacket); 
     }

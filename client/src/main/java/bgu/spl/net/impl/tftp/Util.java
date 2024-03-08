@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class Util {
 
@@ -19,7 +20,9 @@ public class Util {
     }
 
     public static int twoByteToInt(byte [] bytes){
-        return ( int ) ((( int ) bytes [0]) << 8 | ( int ) ( bytes [1]) );
+        //return ( int ) ((( int ) bytes [0]) << 8 | ( int ) ( bytes [1]) );
+        return (int) (bytes[0]) << 8 | (short) (bytes[1]) & 0x00ff;
+
     }
 
     public static byte getOpcodeValue(String str){
@@ -92,6 +95,14 @@ public class Util {
              fileName = fileName  + " " + splitUserInput[i];
         } 
         return fileName;
+     }
+
+     public static String extractString(byte[] msg, int indent){
+        byte[] fileNameBytes = new byte[msg.length - 4];
+        for (int i = 0; i < fileNameBytes.length; i++) {
+            fileNameBytes[i] = msg[i + indent];
+        }
+        return new String(fileNameBytes, StandardCharsets.UTF_8);
      }
 
     

@@ -7,6 +7,8 @@ import java.net.Socket;
 
 public class TftpClient {
     public final static Object waitOnObject = new Object();
+
+    //TODO: implement the main logic of the client, when using a thread per client the main logic goes here
     public static void main(String[] args) throws IOException {
 
         if (args.length == 0) {
@@ -14,63 +16,19 @@ public class TftpClient {
         }
 
         //BufferedReader and BufferedWriter automatically using UTF-8 encoding
-            Socket sock = new Socket(args[0], 7777);
-            InputStream in = sock.getInputStream();
-            OutputStream out = sock.getOutputStream();
-            CurrentCommand currentCommand = new CurrentCommand();
-            currentCommand.setState(STATE.Unoccupied);
+        Socket sock = new Socket(args[0], 7777);
+        InputStream in = sock.getInputStream();
+        OutputStream out = sock.getOutputStream();
+        CurrentCommand currentCommand = new CurrentCommand();
+        currentCommand.setState(STATE.Unoccupied);
 
-            //final BlockingQueue<String> commandQueue = new ArrayBlockingQueue<>(100);
-            final CommandParser commandParser = new CommandParser();
-            final KeyBoardThread keyBoradThread = new KeyBoardThread(commandParser, out, currentCommand);
-            final ListeningThread listeningThread = new ListeningThread(in, currentCommand);
-            //final CommandProccessorThread commandProccessorThread = new CommandProccessorThread(commandQueue, commandParser, out);
+        final CommandParser commandParser = new CommandParser();
+        final KeyBoard keyBoradThread = new KeyBoard(commandParser, out, currentCommand);
+        final Listening listeningThread = new Listening(in, currentCommand);
 
-            new Thread(keyBoradThread).start();
-            new Thread(listeningThread).start();
-            //new Thread(commandProccessorThread).start();
+        new Thread(keyBoradThread).start();
+        new Thread(listeningThread).start();
 
     }
-
-    //TODO: implement the main logic of the client, when using a thread per client the main logic goes here
-    public static void main1(String[] args) throws IOException {
-
-        if (args.length == 0) {
-            args = new String[]{"localhost", "login"};
-        }
-
-        if (args.length < 2) {
-            System.out.println("you must supply two arguments: host, message");
-            System.exit(1);
-        }
-
-        //BufferedReader and BufferedWriter automatically using UTF-8 encoding
-        try (Socket sock = new Socket(args[0], 7777)) {
-            InputStream in = sock.getInputStream();
-            OutputStream out = sock.getOutputStream();
-
-            // System.out.println("sending message to server");
-            // byte[] msg = new byte[] {
-            //     0,
-            //     7,
-            //     'o',
-            //     'r',
-            //     'i',
-            //     0
-            // };
-            // out.write(msg);
-            // out.flush();
-
-            // System.out.println("awaiting response");
-            // for (int i = 0; i < 4; i++) {
-            //     int x = in.read();
-            //     System.out.println(x);
-            // }
-            // byte[] response = in.readAllBytes();
-            // System.out.println("message from server: " + response);
-        }
-    }
-
-
 
 }

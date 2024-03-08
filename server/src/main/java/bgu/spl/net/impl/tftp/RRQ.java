@@ -56,9 +56,8 @@ public class RRQ implements Command<byte[]>
         {
             //extracting fileName
             final int INDENT=2;
-            byte [] bytesFileName= new byte[arg.length-2];//acording ori we get args withoud the last byte 
-            for(int i=0; i<arg.length; i++)
-            {
+            byte [] bytesFileName= new byte[arg.length-2];
+            for(int i=0; i<bytesFileName.length; i++){
                 bytesFileName[i]=arg[i+INDENT];
             }
             String fileName = new String(bytesFileName, StandardCharsets.UTF_8);
