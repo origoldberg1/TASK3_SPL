@@ -45,7 +45,7 @@ public class WRQ implements Command<byte[]>
     {
         if(!errorFound(arg, handler, connectionsObject))
         {
-                        //extracting fileName
+            //extracting fileName
             byte [] bytesFileName= new byte[arg.length-2];//According to ori we get arg without the last byte 
             for(int i=2; i<arg.length; i++)
             {
@@ -57,7 +57,6 @@ public class WRQ implements Command<byte[]>
             try {
                 file.createNewFile();
                 handler.setFileToWritePath("server/Files/"+fileName);
-                System.out.println("creating new file");
                 //starting broadcast
                 byte [] bcastMsg= new BCAST(bytesFileName, (byte)0x01).getBcast();
                 ConcurrentHashMap <Integer, BlockingConnectionHandler<byte[]>> connectionsHash =connectionsObject.getConnectionsHash();
