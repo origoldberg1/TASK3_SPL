@@ -63,7 +63,7 @@ public class DELRQ implements Command<byte[]>
                 Path filePath = Paths.get("server/Files/"+fileName);
                 Files.delete(filePath); 
                 //starting broadcast
-                byte [] bcastMsg= new BCAST(bytesFileName, (byte)0x00).getBcast();
+                byte [] bcastMsg= new BCAST(bytesFileName, (byte)0x00).getBcastMsg();
                 ConcurrentHashMap <Integer, BlockingConnectionHandler<byte[]>> connectionsHash =connectionsObject.getConnectionsHash();
                 ConcurrentHashMap<Integer, BlockingConnectionHandler<byte[]>> copyConnectionsHash = new ConcurrentHashMap<>(connectionsHash);
                 for(int i=0; i<connectionsHash.size(); i++)

@@ -9,7 +9,7 @@ public class TftpProtocol implements BidiMessagingProtocol <byte[]>  {
     private BlockingConnectionHandler <byte[]> handler;
     private TftpConnections connectionsObj;
     private volatile boolean shouldTerminate=false;  
-    private HoldsDataToSend dataToSend; //
+    private HoldsDataToSend dataToSend;
     private int connectionId;
     public HoldsDataToSend packetToSend() //we add that
     {
