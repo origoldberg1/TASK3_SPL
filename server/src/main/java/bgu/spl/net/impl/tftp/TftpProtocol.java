@@ -11,9 +11,25 @@ public class TftpProtocol implements BidiMessagingProtocol <byte[]>  {
     private volatile boolean shouldTerminate=false;  
     private HoldsDataToSend dataToSend;
     private int connectionId;
+    private HoldsDataToWrite dataToWrite;
+    
     public HoldsDataToSend packetToSend() //we add that
     {
         return dataToSend; 
+    }
+
+    public void setDataToWrite(HoldsDataToWrite  dataToWrite) //we add that
+    {
+        this.dataToWrite=dataToWrite;
+    }
+
+    public String getFileToWritePath()
+    {
+        if(dataToWrite==null)
+        {
+            return null;
+        }
+        return dataToWrite.getFileToWritePath();
     }
     
     @Override
@@ -24,6 +40,7 @@ public class TftpProtocol implements BidiMessagingProtocol <byte[]>  {
         this.connectionId=connectionId;
         this.dataToSend=null;
         System.out.println("start");
+        dataToWrite=null;
         //throw new UnsupportedOperationException("Unimplemented method 'start'");
     }
 
@@ -41,10 +58,13 @@ public class TftpProtocol implements BidiMessagingProtocol <byte[]>  {
                 new WRQ().execute(message, handler, connectionsObj);
                 break;
             case 3:
-                new DATA().execute(message, handler, connectionsObj);   
+                if(dataToWrite==null){break;};
+                dataToWrite.execute(message, handler, connectionsObj);   
                 break;
             case 4:
-                dataToSend.sendPacket(message);                 
+                if(dataToSend==null){break;};
+                dataToSend.sendPacket(message); 
+                break;                
             case 6:
                 new DIRQ().execute(message, handler, connectionsObj);
                 break;

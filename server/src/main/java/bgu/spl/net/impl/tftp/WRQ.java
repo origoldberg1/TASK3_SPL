@@ -11,6 +11,7 @@ import bgu.spl.net.srv.BlockingConnectionHandler;
 
 public class WRQ implements Command<byte[]> 
 {
+    private static final String TftpProtocol = null;
     private boolean errorFound(byte[] arg, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject)
     {
         byte [] bytesFileName= new byte[arg.length-2];//Acording to Ori we get args without the last byte 
@@ -52,11 +53,13 @@ public class WRQ implements Command<byte[]>
                 bytesFileName[i-2]=arg[i];
             }
             String fileName = new String(bytesFileName, StandardCharsets.UTF_8);              
-            //trying to create th file
+            //trying to create the file
             File file = new File("server/Files/"+fileName);
             try {
                 file.createNewFile();
-                handler.setFileToWritePath("server/Files/"+fileName);
+                //updating protocol there is a path to write
+                HoldsDataToWrite holdsDataTowrite= new HoldsDataToWrite("server/Files/"+fileName);
+                ((TftpProtocol)(handler.getProtocol())).setDataToWrite(holdsDataTowrite);
                 //starting broadcast
                 BCAST bcast = new BCAST(bytesFileName, (byte)0x01);
                 byte [] bcastMsg= bcast.getBcastMsg();

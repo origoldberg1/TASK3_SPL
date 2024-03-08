@@ -1,8 +1,4 @@
 package bgu.spl.net.impl.tftp;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import bgu.spl.net.srv.BlockingConnectionHandler;
@@ -79,21 +75,21 @@ public class HoldsDataToSend
                     byteList.add(dataToSend[k]);
                 }
                 block++;
-                packetArr=convertListToArr(byteList);
+                packetArr=Util.convertListToArr(byteList);
                 connectionsObj.send(handler.getId(), packetArr); 
             }      
         }
     }
 
-    public static byte [] convertListToArr( List<Byte> packetList)
-    {
-        byte[] byteArray = new byte[packetList.size()];
-        for (int i = 0; i < packetList.size(); i++) 
-        {
-            byteArray[i] = packetList.get(i);
-        }
-        return byteArray;
-    }
+    // public static byte [] convertListToArr( List<Byte> packetList)
+    // {
+    //     byte[] byteArray = new byte[packetList.size()];
+    //     for (int i = 0; i < packetList.size(); i++) 
+    //     {
+    //         byteArray[i] = packetList.get(i);
+    //     }
+    //     return byteArray;
+    // }
 
     public void sendEmptyPacket()
     {

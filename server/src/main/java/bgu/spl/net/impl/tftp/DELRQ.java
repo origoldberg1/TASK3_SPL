@@ -74,9 +74,11 @@ public class DELRQ implements Command<byte[]>
                         int id=ch.getId();
                         connectionsObject.send(id,bcastMsg);
                     }
-                    if(ch.getFileToWritePath()!=null && ch.getFileToWritePath()=="server/Files/"+fileName) 
+                    TftpProtocol protocol=(TftpProtocol)(ch.getProtocol());
+
+                    if(protocol.getFileToWritePath()!=null && protocol.getFileToWritePath()=="server/Files/"+fileName) 
                     {
-                        ch.setFileToWritePath(null);
+                        protocol.setDataToWrite(null);
                     }
                 }
                 //finishing broadCast

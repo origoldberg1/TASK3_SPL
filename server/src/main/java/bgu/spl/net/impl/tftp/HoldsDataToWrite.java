@@ -8,13 +8,29 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 //this class implements all about writing to files- after WRQ opcode
-public class DATA implements Command<byte[]> {
+public class HoldsDataToWrite implements Command<byte[]> {
+    
+    List<Byte> byteList;
+    String fileToWritePath;
+    public HoldsDataToWrite(String fileToWritePath)
+    { 
+        this.byteList= new ArrayList<>();
+        this.fileToWritePath=fileToWritePath;
+    }
+    
+    public String getFileToWritePath()
+    {
+        return fileToWritePath;
+    }
+
 
     public boolean errorFound(byte[] arg, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject)
     {
-        Path filePath = Paths.get(handler.getFileToWritePath());
+        Path filePath = Paths.get(fileToWritePath);
         //error 1- File not found 
         if(!Files.exists(filePath)) {
               connectionsObject.send(handler.getId(),new ERROR (1).getError());
@@ -22,11 +38,6 @@ public class DATA implements Command<byte[]> {
         }
         //error 2- access violation 
         if(!Files.isWritable(filePath)){
-            connectionsObject.send(handler.getId(),new ERROR (2).getError());
-            return true;
-        }
-        //error 2- access violation 
-        if(!Files.isWritable(filePath)) {
             connectionsObject.send(handler.getId(),new ERROR (2).getError());
             return true;
         }
@@ -46,21 +57,19 @@ public class DATA implements Command<byte[]> {
     @Override
     public void execute(byte[] packet, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject) 
     {
-        if(!errorFound(packet, handler, connectionsObject)){
-              
-            try (FileOutputStream fos = new FileOutputStream(handler.getFileToWritePath())){
-                byte [] dataBytes= new byte[packet.length-6];
-                for (int i=0; i<dataBytes.length; i++) {
-                    dataBytes[i]=packet[i+6]; //data information starts at sixth cell in Data Opcode
-                }
-                fos.write(dataBytes); //writing the data packet to file
-                if(dataBytes.length<512){ //means this is the last packet to write
-                    handler.setFileToWritePath(null);
-                }
-                byte [] ackMsg=new ACK(new byte[]{packet[4],packet[5]}).getAck();
-                connectionsObject.send(handler.getId(),ackMsg);
-            } 
-            catch (IOException e) {connectionsObject.send(handler.getId(), new ERROR(2).getError());} //someone deleted the file so we can't write into anymore 
-        }
+        if(!errorFound(packet, handler, connectionsObject))
+        {  
+            for (int i=0; i<packet.length-6; i++) {
+                byteList.add(packet[i+6]); //data information starts at sixth cell in Data Opcode
+            }
+            if(byteList.size()<512){ //means this is the last packet to write
+                byte [] buffer= Util.convertListToArr(byteList);
+                try{Util.writeFile(fileToWritePath, buffer);}catch(IOException e){}
+                ((TftpProtocol)handler.getProtocol()).setDataToWrite(null);
+            }
+            byte [] ackMsg=new ACK(new byte[]{packet[4],packet[5]}).getAck();
+            connectionsObject.send(handler.getId(),ackMsg);
+        }  
     }
+
 }

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 public class Util {
 
@@ -32,5 +33,15 @@ public class Util {
             fos.write(bytes);
             fos.close();
         }
+    }
+
+    public static byte [] convertListToArr( List<Byte> byteList)
+    {
+        byte[] byteArray = new byte[byteList.size()];
+        for (int i = 0; i < byteList.size(); i++) 
+        {
+            byteArray[i] = byteList.get(i);
+        }
+        return byteArray;
     }
 }
