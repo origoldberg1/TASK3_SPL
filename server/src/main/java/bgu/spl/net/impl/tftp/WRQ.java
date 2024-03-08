@@ -58,7 +58,8 @@ public class WRQ implements Command<byte[]>
                 file.createNewFile();
                 handler.setFileToWritePath("server/Files/"+fileName);
                 //starting broadcast
-                byte [] bcastMsg= new BCAST(bytesFileName, (byte)0x01).getBcast();
+                BCAST bcast = new BCAST(bytesFileName, (byte)0x01);
+                byte [] bcastMsg= bcast.getBcastMsg();
                 ConcurrentHashMap <Integer, BlockingConnectionHandler<byte[]>> connectionsHash =connectionsObject.getConnectionsHash();
                 ConcurrentHashMap<Integer, BlockingConnectionHandler<byte[]>> copyConnectionsHash = new ConcurrentHashMap<>(connectionsHash);
                 for(int i=0; i<copyConnectionsHash.size(); i++)
