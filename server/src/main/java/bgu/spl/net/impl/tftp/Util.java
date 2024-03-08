@@ -29,10 +29,16 @@ public class Util {
     }
 
     public static void writeFile(String fileFullPath, byte[] bytes) throws FileNotFoundException, IOException {
-        try (FileOutputStream fos = new FileOutputStream(fileFullPath)) {
+        System.out.println("in writeFile method");
+
+        try{
+            FileOutputStream fos = new FileOutputStream(fileFullPath);
+            System.out.println("line 1 in writeFile passed");
             fos.write(bytes);
+            System.out.println("line 2 in writeFile passed");
             fos.close();
-        }
+            System.out.println("line 3 in writeFile passed");
+        }catch(IOException e){ System.out.println("cannot write");}
     }
 
     public static byte [] convertListToArr( List<Byte> byteList)
