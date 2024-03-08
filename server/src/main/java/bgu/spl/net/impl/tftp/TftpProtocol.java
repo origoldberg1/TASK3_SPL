@@ -49,8 +49,8 @@ public class TftpProtocol implements BidiMessagingProtocol <byte[]>  {
     {
         // TODO implement this
         System.out.println("process");
-        int opcode=Util.twoByteToInt(new byte []{message[0], message[1]});
-        switch (opcode)
+        // int opcode=Util.twoByteToInt(new byte []{message[0], message[1]});
+        switch (message[1])
         {
             case 1:
                 System.out.println("1");
