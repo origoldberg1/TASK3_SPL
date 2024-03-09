@@ -17,6 +17,7 @@ public class DIRQ implements Command{
     @Override
     public void execute() {
         currentCommand.setReceiveData(new ReceiveData());
+        currentCommand.setState(STATE.DIRQ);
         try {
             outputStream.write(new byte[]{0,6});
             outputStream.flush();

@@ -73,7 +73,7 @@ public class ReceiveData {
     private void printDIRQData(){
         String [] fileNames = Util.convertDIRQDataToStringArr(data);
         for (String fileName : fileNames) {
-            System.out.println(fileName + '\n');
+            System.out.println(fileName);
         }
     }
 }

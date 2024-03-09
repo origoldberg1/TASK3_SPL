@@ -51,16 +51,15 @@ public class Listening implements Runnable{
                             if(!currentCommand.getReceiveData().processPacket(nextMessage)){
                                 System.out.println("RRQ "+ currentCommand.getReceiveData().getFileName() + " complete");
                                 currentCommand.resetFields();
-                            } else if(currentCommand.getState().equals(STATE.DIRQ)){
-                                new ACK(outputStream, nextMessage).execute();;
-                                if(!currentCommand.getReceiveData().processPacket(nextMessage)){
-                                    currentCommand.resetFields();
-                                }
                             }
 
                         }
-                        else if(currentCommand.getState().equals(STATE.DIRQ)){}
-
+                        else if(currentCommand.getState().equals(STATE.DIRQ)){
+                            new ACK(outputStream, nextMessage).execute();;
+                            if(!currentCommand.getReceiveData().processPacket(nextMessage)){
+                                currentCommand.resetFields();
+                            }
+                        }
                         //TODO: handle case state != RRQ/DIRQ
 
                     } else if(opcode == ACK){
