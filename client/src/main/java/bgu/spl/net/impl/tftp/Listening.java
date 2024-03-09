@@ -52,8 +52,10 @@ public class Listening implements Runnable{
                                 System.out.println("RRQ "+ currentCommand.getReceiveData().getFileName() + " complete");
                                 currentCommand.resetFields();
                             } else if(currentCommand.getState().equals(STATE.DIRQ)){
-                                printDIRQData(nextMessage);
-                                currentCommand.resetFields();
+                                new ACK(outputStream, nextMessage).execute();;
+                                if(!currentCommand.getReceiveData().processPacket(nextMessage)){
+                                    currentCommand.resetFields();
+                                }
                             }
 
                         }
@@ -104,11 +106,6 @@ public class Listening implements Runnable{
     }
     
 
-    private void printDIRQData(byte[] msg){
-        String [] fileNames = Util.convertDIRQDataToStringArr(msg);
-        for (String fileName : fileNames) {
-            System.out.println(fileName + '\n');
-        }
-    }
+
 }
 

@@ -32,7 +32,7 @@ public class Keyboard implements Runnable{
         while (! terminate) {
             if (scanner.hasNextLine()) {
                 String userInput = scanner.nextLine();
-                Command command = new DIRQ(outputStream); //for compilition purpose
+                Command command = new DIRQ(outputStream, currentCommand); //for compilition purpose
                 switch (Util.getOpcodeValue(userInput.split(" ")[0])){
                     case 1:
                         fileName = Util.getFileName(userInput);
@@ -40,14 +40,10 @@ public class Keyboard implements Runnable{
                         break;
                     case 2:
                         fileName = Util.getFileName(userInput);
-                        Path filePath = Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName);
-                        currentCommand.setFilePath(filePath);
-                        currentCommand.setState(STATE.WRQ);
-                        currentCommand.setSendData(new SendData(fileName, outputStream));
-                        command = new WRQ(outputStream, fileName); 
+                        command = new WRQ(outputStream, fileName, currentCommand); 
                         break;
                     case 6:
-                        command = new DIRQ(outputStream);
+                        command = new DIRQ(outputStream, currentCommand);
                         break;
                     case 7:
                         command = new LOGRQ(outputStream, userInput.split(" ")[1]);

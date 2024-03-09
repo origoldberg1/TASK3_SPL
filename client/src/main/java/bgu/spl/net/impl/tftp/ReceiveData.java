@@ -11,12 +11,18 @@ public class ReceiveData {
     final String fileName;
      
     
+    public ReceiveData() {
+        this.blockNumber = 0;
+        this.data = new byte[0];
+        fileName = null;
+    }
+
     public ReceiveData(String fileName) {
         this.blockNumber = 0;
         this.data = new byte[0];
         this.fileName = fileName;
     }
-    
+
     public String getFileName() {
         return fileName;
     }
@@ -29,10 +35,15 @@ public class ReceiveData {
             data[indent + i] = packet[i];
         }
         if(packet.length < DEFAULT_PACKET_SIZE) {
-            try {
-                Util.writeFile(fileName, data);
-            } catch (FileNotFoundException e) {} catch (IOException e) {}
-            return false;
+            if(fileName != null){
+                try {
+                    Util.writeFile(fileName, data);
+                } catch (FileNotFoundException e) {} catch (IOException e) {}
+                return false;
+            }
+            else{
+                printDIRQData();
+            }
         }
         blockNumber ++;
         return true;
@@ -57,5 +68,12 @@ public class ReceiveData {
 
     public void deleteFile() throws IOException {
         Util.deleteFile(Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName));
+    }
+
+    private void printDIRQData(){
+        String [] fileNames = Util.convertDIRQDataToStringArr(data);
+        for (String fileName : fileNames) {
+            System.out.println(fileName + '\n');
+        }
     }
 }
