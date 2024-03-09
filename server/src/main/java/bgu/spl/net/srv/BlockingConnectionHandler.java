@@ -72,7 +72,8 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     public synchronized void send(T msg){ //implement if needed
         try{
             out = new BufferedOutputStream(sock.getOutputStream());
-            out.write(encdec.encode(msg));
+            byte[] msgEncoded = encdec.encode(msg);
+            out.write(msgEncoded);
             out.flush();
         }catch(IOException e){}
     }

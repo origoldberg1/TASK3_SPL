@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Util {
 
@@ -124,7 +128,7 @@ public class Util {
     }
 
     public static void writeFile(String fileName, byte[] bytes) throws FileNotFoundException, IOException {
-        try (FileOutputStream fos = new FileOutputStream(fileName)) {
+        try (FileOutputStream fos = new FileOutputStream(Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName).toString())) {
             fos.write(bytes);
             fos.close(); // There is no more need for this line since you had created the instance of "fos" inside the try. And this will automatically close the OutputStream
         }
@@ -134,4 +138,35 @@ public class Util {
         Files.delete(fileFullPath);
     }
 
+    public static String[] convertDIRQDataToStringArr(byte[] msg){
+        List <String> fileNames = new LinkedList<>();
+        List<Byte> curFileName = new LinkedList<>();
+        for (int i = 6; i < msg.length; i++) {
+            if(msg[i] == 0){
+                fileNames.add(new String(convertListToArrBytes(curFileName), StandardCharsets.UTF_8));
+                curFileName = new LinkedList<>();
+            } else{
+                curFileName.add(msg[i]);
+            }
+        }
+        fileNames.add(new String(convertListToArrBytes(curFileName), StandardCharsets.UTF_8));
+        return convertListToArr(fileNames);
+    }
+
+    public static String[] convertListToArr( List<String> list) {
+        String[] arr = new String[list.size()];
+        for (int i = 0; i < list.size(); i++){
+            arr[i] = list.get(i);
+        }
+        return arr;
+    }
+
+    public static byte[] convertListToArrBytes( List<Byte> list) {
+        byte[] arr = new byte[list.size()];
+        for (int i = 0; i < list.size(); i++){
+            arr[i] = list.get(i);
+        }
+        return arr;
+    }
 }
+

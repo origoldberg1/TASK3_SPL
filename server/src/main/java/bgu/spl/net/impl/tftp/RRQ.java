@@ -74,10 +74,10 @@ public class RRQ implements Command<byte[]>
             HoldsDataToSend dataToSend=new HoldsDataToSend(connectionsObject, dataByte, handler);
             //updating protocol to hold dataToSend object
             ((TftpProtocol)handler.getProtocol()).setHoldsDataToSend(dataToSend);
-            //sending first packet
-            byte[] blockNumber= new byte[] {0,0};
-            dataToSend.sendPacket(new ACK(blockNumber).getAck()); //note- there is no meaning for the blockNumber field type in sendPacket method 
-            
+            dataToSend.sendPacket(new byte[] {0,4,0,0});
+            //sending ack
+        //     byte[] blockNumber= new byte[] {0,0};
+        //     connectionsObject.send(handler.getId(),new ACK(blockNumber).getAck()); //note- there is no meaning for the blockNumber field type in sendPacket method 
         }
     }
 }

@@ -26,7 +26,8 @@ public class ACK implements Command{
             blockNumberBytes = Util.intToTwoByte(blockNumber);
         }
         try {
-            outputStream.write(new byte[]{0,0, blockNumberBytes[0], blockNumberBytes[1]});
+            outputStream.write(new byte[]{0,4, blockNumberBytes[0], blockNumberBytes[1]});
+            outputStream.flush();
         } catch (IOException e) {}
     }
 

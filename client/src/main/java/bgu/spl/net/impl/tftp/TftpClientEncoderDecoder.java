@@ -9,7 +9,7 @@ public class TftpClientEncoderDecoder implements MessageEncoderDecoder<byte[]> {
 
     private byte[] bytes = new byte[1 << 10]; //start with 1k
     private int len = 0;
-    private int size;
+    private int size = -1;
 
     @Override
     public byte[] decodeNextByte(byte nextByte) {
@@ -30,8 +30,8 @@ public class TftpClientEncoderDecoder implements MessageEncoderDecoder<byte[]> {
                 case 5:
                     if(decodeNextByteError(nextByte)) {res = bytes;}
                     break;
-                case 6: case 10:
-                    return bytes; //will cause an error due to len = 2 always?
+                // case 6: case 10:
+                //     return bytes; //will cause an error due to len = 2 always?
                  case 9:
                  if(decodeNextByteBcast(nextByte)) {res = bytes;}
                     break;
@@ -41,6 +41,9 @@ public class TftpClientEncoderDecoder implements MessageEncoderDecoder<byte[]> {
         }
         else{
             pushByte(nextByte);
+            if(len == 2 && (bytes[1] == 6 || bytes[1] == 10)){
+                res = bytes;
+            }
         }
         if(res != null) {
             byte[] trimed = trim();
@@ -72,7 +75,7 @@ public class TftpClientEncoderDecoder implements MessageEncoderDecoder<byte[]> {
     
     private boolean decodeNextByteKnownPacketLength(byte nextByte, int opcodeLength){
         if(len == 4){
-            size =  opcodeLength + ( short ) ((( short ) bytes [2]) << 8 | ( short ) ( bytes [3]) );
+            size =  opcodeLength + Util.twoByteToInt(new byte[]{bytes[2], bytes[3]});
         }
         pushByte(nextByte);
         return size == len;
@@ -105,6 +108,7 @@ public class TftpClientEncoderDecoder implements MessageEncoderDecoder<byte[]> {
 
     private void reset(){
         len = 0;
+        size = -1;
         bytes = new byte[1 << 10];
     }
 

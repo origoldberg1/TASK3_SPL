@@ -47,8 +47,8 @@ public class ReceiveData {
     }
 
     private byte[] extractData(byte[] packet){
-        byte[] res = new byte[packet.length - 2];
-        int indent = 2;
+        byte[] res = new byte[packet.length - 6];
+        int indent = 6;
         for (int i = 0; i < res.length; i++) {
             res[i] = packet[i+indent];
         }

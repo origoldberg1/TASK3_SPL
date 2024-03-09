@@ -47,13 +47,20 @@ public class Listening implements Runnable{
                     int opcode = Util.getOpcode(nextMessage);
                     if(opcode == DATA){
                         if(currentCommand.getState().equals(STATE.RRQ)){
-                            new ACK(outputStream, nextMessage);
+                            new ACK(outputStream, nextMessage).execute();;
                             if(!currentCommand.getReceiveData().processPacket(nextMessage)){
-                                System.out.println("WRQ "+ currentCommand.getReceiveData().getFileName() + " complete");
+                                System.out.println("RRQ "+ currentCommand.getReceiveData().getFileName() + " complete");
+                                currentCommand.resetFields();
+                            } else if(currentCommand.getState().equals(STATE.DIRQ)){
+                                printDIRQData(nextMessage);
                                 currentCommand.resetFields();
                             }
-                            //TODO: handle case state != RRQ
+
                         }
+                        else if(currentCommand.getState().equals(STATE.DIRQ)){}
+
+                        //TODO: handle case state != RRQ/DIRQ
+
                     } else if(opcode == ACK){
                         System.out.println("ACK " + Util.twoByteToInt(new byte[]{nextMessage[2], nextMessage[3]}));
                         if(currentCommand.getState().equals(STATE.WRQ)){
@@ -96,5 +103,12 @@ public class Listening implements Runnable{
         } catch (IOException e) {}
     }
     
+
+    private void printDIRQData(byte[] msg){
+        String [] fileNames = Util.convertDIRQDataToStringArr(msg);
+        for (String fileName : fileNames) {
+            System.out.println(fileName + '\n');
+        }
+    }
 }
 
