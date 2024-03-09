@@ -68,7 +68,10 @@ public class DIRQ implements Command<byte[]> {
                 i++;
             }
             //TODO creating the data to send
-            connectionsObject.send(handler.getId(), data);
+            HoldsDataToSend dataToSend= new HoldsDataToSend(connectionsObject, data, handler);
+            ((TftpProtocol)handler.getProtocol()).setHoldsDataToSend(dataToSend);
+            dataToSend.sendPacket(new byte[] {0,4,0,0});
+
         }
 
     }
