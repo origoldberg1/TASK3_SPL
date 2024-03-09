@@ -8,7 +8,7 @@ enum STATE{
     WRQ,
     DIRQ,
     LOGRQ,
-    DELERQ,
+    DELRQ,
     DISC,
     Unoccupied
 }
