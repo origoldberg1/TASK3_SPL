@@ -14,17 +14,21 @@ public class Listening implements Runnable{
     private OutputStream outputStream;
     private MessageEncoderDecoder<byte[]> encdec;
     CurrentCommand currentCommand;
+    Keyboard keyboard;
+    Object waitOnObject;
     final int DATA = 3;
     final int ACK = 4;
     final int ERROR = 5;
     final int BCAST = 9;
 
     
-    public Listening(InputStream inputStream, CurrentCommand currentCommand, OutputStream outputStream) {
+    public Listening(InputStream inputStream, CurrentCommand currentCommand, OutputStream outputStream, Keyboard keyboard, Object waitOnObject) {
         this.inputStream = inputStream;
         this.encdec = new TftpClientEncoderDecoder();
         this.currentCommand = currentCommand;
         this.outputStream = outputStream;
+        this.keyboard = keyboard;
+        this.waitOnObject = waitOnObject;
     }
 
 
@@ -57,8 +61,18 @@ public class Listening implements Runnable{
                                 System.out.println("WRQ "+ currentCommand.getSendData().getFileName() + " complete");
                                 currentCommand.resetFields();
                             }
-                        } else{
                             currentCommand.resetFields();
+                        } else{
+                            if(currentCommand.getState().equals(STATE.DISC)){
+                                synchronized(keyboard){
+                                    keyboard.terminate = true;
+                                } 
+                            }
+                            else if(currentCommand.getState().equals(STATE.LOGRQ)){
+                                synchronized(keyboard){
+                                    keyboard.loggedIn = true;
+                                }
+                            }
                         }
                     } else if(opcode == BCAST){
                         System.out.println("BCAST " + nextMessage[2] + " " + Util.extractString(nextMessage, 3));
@@ -73,7 +87,9 @@ public class Listening implements Runnable{
                     }
                     
                     if(currentCommand.getState().equals(STATE.Unoccupied)){
-                        //wake up keyboard thread
+                        synchronized(waitOnObject){
+                            waitOnObject.notifyAll();
+                        }
                     }
                 }
             }

@@ -2,9 +2,6 @@ package bgu.spl.net.impl.tftp;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import bgu.spl.net.api.Command;
 
 public class WRQ implements Command{
@@ -27,27 +24,5 @@ public class WRQ implements Command{
         } catch (IOException e) {}
     }
 }
-        
-
-        
-    //     SendData sendData = new SendData(filePath);
-    //     int blockNumber = 0;
-    //     do{
-    //         packet = sendData.makePacket(blockNumber);
-    //         try {
-    //             outputStream.write(Util.padDataPacket(packet, blockNumber));
-    //             outputStream.flush();
-    //             System.out.println("keyboard thread: sending packet number " + blockNumber);
-    //             synchronized(TftpClient.waitOnObject){
-    //                 try {
-    //                     TftpClient.waitOnObject.wait();
-    //                 } catch (InterruptedException e) {}
-    //             }
-
-    //         } catch (IOException e) {}
-    //         blockNumber ++;
-    //     }   
-    //     while(packet.length == 512);    
-    // }
 
 

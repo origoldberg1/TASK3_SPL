@@ -7,18 +7,21 @@ import java.util.Scanner;
 
 import bgu.spl.net.api.Command;
 
-public class KeyBoard implements Runnable{
+public class Keyboard implements Runnable{
     boolean terminate = false;
     Util.State state = Util.State.Simple; 
     CommandParser commandParser;
     OutputStream outputStream;
     CurrentCommand currentCommand;
+    boolean loggedIn = false;
+    Object waitOnObject;
 
     
-    public KeyBoard(CommandParser commandParser, OutputStream outputStream, CurrentCommand currentCommand) {
+    public Keyboard(CommandParser commandParser, OutputStream outputStream, CurrentCommand currentCommand, Object waitOnObject) {
         this.commandParser = commandParser;
         this.outputStream = outputStream;
         this.currentCommand = currentCommand;
+        this.waitOnObject = waitOnObject;
     }
 
     @Override
@@ -53,12 +56,24 @@ public class KeyBoard implements Runnable{
                         command = new DELRQ(outputStream, Util.getFileName(userInput));
                         break;
                     case 10:
+                        synchronized(this){
+                            if(!loggedIn){
+                                terminate = true;
+                                break;
+                                //TODO: call a function that closes the client program
+                            }
+                        }
                         new DISC(outputStream).execute();
                         break;
                     default:
                         break; //TODO: check what to do in this case
                 }
                 command.execute();
+                synchronized(waitOnObject){
+                    try {
+                        waitOnObject.wait();
+                    } catch (InterruptedException e) {};
+                }
             }
         }
         scanner.close();

@@ -22,12 +22,13 @@ public class TftpClient {
         CurrentCommand currentCommand = new CurrentCommand();
         currentCommand.setState(STATE.Unoccupied);
 
+        final Object wainOnObject = new Object();
         final CommandParser commandParser = new CommandParser();
-        final KeyBoard keyBoradThread = new KeyBoard(commandParser, out, currentCommand);
-        final Listening listeningThread = new Listening(in, currentCommand, out);
+        final Keyboard keyborad = new Keyboard(commandParser, out, currentCommand, wainOnObject);
+        final Listening listening = new Listening(in, currentCommand, out, keyborad, wainOnObject);
 
-        new Thread(keyBoradThread).start();
-        new Thread(listeningThread).start();
+        new Thread(keyborad).start();
+        new Thread(listening).start();
 
     }
 
