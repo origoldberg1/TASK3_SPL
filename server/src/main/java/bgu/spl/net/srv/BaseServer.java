@@ -48,8 +48,7 @@ public abstract class BaseServer<T> implements Server<T> {
                         protocolFactory.get());
                 execute(handler);
             }
-        } catch (IOException ex) {
-        }
+        } catch (IOException ex) {System.out.println(ex);}
 
         System.out.println("server closed!!!");
     }
