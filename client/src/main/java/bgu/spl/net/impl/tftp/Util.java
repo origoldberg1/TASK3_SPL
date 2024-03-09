@@ -141,7 +141,7 @@ public class Util {
     public static String[] convertDIRQDataToStringArr(byte[] msg){
         List <String> fileNames = new LinkedList<>();
         List<Byte> curFileName = new LinkedList<>();
-        for (int i = 6; i < msg.length; i++) {
+        for (int i = 0; i < msg.length; i++) {
             if(msg[i] == 0){
                 fileNames.add(new String(convertListToArrBytes(curFileName), StandardCharsets.UTF_8));
                 curFileName = new LinkedList<>();

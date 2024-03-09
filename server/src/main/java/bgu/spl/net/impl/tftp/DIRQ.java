@@ -60,14 +60,15 @@ public class DIRQ implements Command<byte[]> {
             }
             bytesNameFiles.remove(bytesNameFiles.size() - 1);
             //converting bytesNameFiles list to array
-            int i=0;
-            byte[] data = new byte[bytesNameFiles.size()];
-            for (byte b: bytesNameFiles) 
-            {
-                data[i] = b;
-                i++;
-            }
-            //TODO creating the data to send
+            byte [] data= Util.convertListToArr(bytesNameFiles);
+            // int i=0;
+            // byte[] data = new byte[bytesNameFiles.size()];
+            // for (byte b: bytesNameFiles) 
+            // {
+            //     data[i] = b;
+            //     i++;
+            // }
+            //creating the data to send
             HoldsDataToSend dataToSend= new HoldsDataToSend(connectionsObject, data, handler);
             ((TftpProtocol)handler.getProtocol()).setHoldsDataToSend(dataToSend);
             dataToSend.sendPacket(new byte[] {0,4,0,0});
