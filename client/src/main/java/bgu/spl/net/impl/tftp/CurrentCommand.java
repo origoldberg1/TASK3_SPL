@@ -1,5 +1,6 @@
 package bgu.spl.net.impl.tftp;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 enum STATE{
@@ -8,6 +9,7 @@ enum STATE{
     DIRQ,
     LOGRQ,
     DELERQ,
+    DISC,
     Unoccupied
 }
 
@@ -48,6 +50,17 @@ public class CurrentCommand {
 
     public synchronized void setReceiveData(ReceiveData receiveData) {
         this.receiveData = receiveData;
+    }
+
+    public synchronized void resetFields(){
+        filePath = null;
+        state = STATE.Unoccupied;    
+        sendData = null;
+        receiveData = null;   
+    }
+
+    public synchronized void deleteRRQFile() throws IOException {
+        receiveData.deleteFile();
     }
 
 }

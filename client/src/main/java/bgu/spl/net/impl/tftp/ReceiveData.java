@@ -2,18 +2,23 @@ package bgu.spl.net.impl.tftp;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 public class ReceiveData {
     int blockNumber; 
     byte[] data;
     final int DEFAULT_PACKET_SIZE = 512;
     final String fileName;
-    
+     
     
     public ReceiveData(String fileName) {
         this.blockNumber = 0;
         this.data = new byte[0];
         this.fileName = fileName;
+    }
+    
+    public String getFileName() {
+        return fileName;
     }
 
     public boolean processPacket(byte[] packet){
@@ -48,5 +53,9 @@ public class ReceiveData {
             res[i] = packet[i+indent];
         }
         return res;
+    }
+
+    public void deleteFile() throws IOException {
+        Util.deleteFile(Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName));
     }
 }

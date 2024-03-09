@@ -24,7 +24,7 @@ public class TftpClient {
 
         final CommandParser commandParser = new CommandParser();
         final KeyBoard keyBoradThread = new KeyBoard(commandParser, out, currentCommand);
-        final Listening listeningThread = new Listening(in, currentCommand);
+        final Listening listeningThread = new Listening(in, currentCommand, out);
 
         new Thread(keyBoradThread).start();
         new Thread(listeningThread).start();

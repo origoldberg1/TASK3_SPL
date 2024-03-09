@@ -6,35 +6,28 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import bgu.spl.net.api.MessageEncoderDecoder;
 
 public class SendData {
+    String fileName;
     byte[] fileBytes;
     final int DEFAULT_PACKET_SIZE = 512;
     int blockNumber = 0;
     OutputStream outputStream;
 
-    public SendData(OutputStream outputStream, String fileFullPath){
-
+    
+    public SendData(String fileName, OutputStream outputStream){
+        this.fileName = fileName;
         try {
-            fileBytes = Util.readFile(fileFullPath);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-            //extracting file size (in bytes)
-            //reads all data to buffer
-
-
-        // try {
-        //     fileBytes = Files.readAllBytes(filePath);
-        //     int numOfPackets = (int) Math.ceil((double) fileBytes.length / defaultPacketSize);
-        //     System.out.println("num of packets= " + numOfPackets);
-        // } catch (IOException e) {
-        //     System.err.println("cannot convert file to byte[]");
-        // }
+            fileBytes = Util.readFile(Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName).toString());
+        } catch (IOException e) {}
         this.outputStream = outputStream;
+    }
+        
+    public String getFileName() {
+        return fileName;
     }
 
     public byte[] makePacket(){

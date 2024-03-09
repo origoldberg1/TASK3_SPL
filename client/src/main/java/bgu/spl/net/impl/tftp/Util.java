@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class Util {
 
@@ -126,6 +128,10 @@ public class Util {
             fos.write(bytes);
             fos.close(); // There is no more need for this line since you had created the instance of "fos" inside the try. And this will automatically close the OutputStream
         }
+    }
+
+    public static void deleteFile(Path fileFullPath) throws IOException{
+        Files.delete(fileFullPath);
     }
 
 }

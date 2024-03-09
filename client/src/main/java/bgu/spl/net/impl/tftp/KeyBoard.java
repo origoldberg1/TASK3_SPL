@@ -40,7 +40,7 @@ public class KeyBoard implements Runnable{
                         Path filePath = Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName);
                         currentCommand.setFilePath(filePath);
                         currentCommand.setState(STATE.WRQ);
-                        currentCommand.setSendData(new SendData(outputStream, filePath.toString()));
+                        currentCommand.setSendData(new SendData(fileName, outputStream));
                         command = new WRQ(outputStream, fileName); 
                         break;
                     case 6:
