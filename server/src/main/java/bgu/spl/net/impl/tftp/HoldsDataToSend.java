@@ -36,6 +36,7 @@ public class HoldsDataToSend
        this.dataToSend=dataToSend;
        sendEmptyPacket=false;
        this.handler=handler;  
+       this.block = 1;
     }
 
     public void sendPacket(byte [] message)

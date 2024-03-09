@@ -58,10 +58,8 @@ public class SendData {
         byte[] packet = makePacket();
         if(packet == null) {return false;}
         try {
-            outputStream.write(Util.padDataPacket(packet, blockNumber));
+            outputStream.write(Util.padDataPacket(packet, blockNumber + 1));
             outputStream.flush();
-            System.out.println("keyboard thread: sending packet number " + blockNumber);
-
         } catch (IOException e) {}
         blockNumber ++;
         return true;

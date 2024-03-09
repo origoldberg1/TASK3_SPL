@@ -42,11 +42,11 @@ public class CurrentCommand {
         this.sendData = sendData;
     }
 
-    public ReceiveData getReceiveData() {
+    public synchronized ReceiveData getReceiveData() {
         return receiveData;
     }
 
-    public void setReceiveData(ReceiveData receiveData) {
+    public synchronized void setReceiveData(ReceiveData receiveData) {
         this.receiveData = receiveData;
     }
 

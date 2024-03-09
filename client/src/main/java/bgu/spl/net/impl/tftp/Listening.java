@@ -41,7 +41,10 @@ public class Listening implements Runnable{
                     if(opcode == DATA){
                         if(currentCommand.getState().equals(STATE.RRQ)){
                             if(!currentCommand.getReceiveData().processPacket(nextMessage)){
+                                
                                 currentCommand.setState(STATE.Unoccupied);
+                                //TODO: reset all fields of currentCommand
+
                             }
                         }
                         //TODO: handle case state != RRQ
@@ -50,6 +53,7 @@ public class Listening implements Runnable{
                         if(currentCommand.getState().equals(STATE.WRQ)){
                             if(!currentCommand.getSendData().sendPacket()){
                                 currentCommand.setState(STATE.Unoccupied);
+                                //TODO: reset all fields of currentCommand
                             }
                             //TODO: handle case state != WRQ
 
