@@ -6,6 +6,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import bgu.spl.net.impl.rci.Command;
 import bgu.spl.net.srv.BlockingConnectionHandler;
 
@@ -30,7 +34,18 @@ public class DIRQ implements Command<byte[]> {
     {
         if(!errorFound(arg, handler, connectionsObject))
         {
-            File folder = new File("server/Flies");
+            File folder = new File("server/Files");
+            // String stringPath = "server/Files";
+            // Path dir= Paths.get(stringPath);
+            // List<Path> files = Files.list(dir).toList();
+            //             for (Path file : files) {
+            //                 System.out.println(file.getFileName());
+            //             }
+            
+
+            
+
+        
             File[] files = folder.listFiles();
             //creating list with file names in byte (0 byte between each of them)
             List<Byte> bytesNameFiles = new ArrayList<>();
@@ -43,6 +58,7 @@ public class DIRQ implements Command<byte[]> {
                 }
                 bytesNameFiles.add((byte)0x00);
             }
+            bytesNameFiles.remove(bytesNameFiles.size() - 1);
             //converting bytesNameFiles list to array
             int i=0;
             byte[] data = new byte[bytesNameFiles.size()];
