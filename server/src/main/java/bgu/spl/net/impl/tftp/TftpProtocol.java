@@ -49,32 +49,41 @@ public class TftpProtocol implements BidiMessagingProtocol <byte[]>  {
     {
         // TODO implement this
         System.out.println("process");
+        // int opcode=Util.twoByteToInt(new byte []{message[0], message[1]});
         switch (message[1])
         {
             case 1:
+                System.out.println("1");
                 new RRQ().execute(message, handler, connectionsObj);
                 break;
             case 2:
                 new WRQ().execute(message, handler, connectionsObj);
+                System.out.println("2");
                 break;
             case 3:
+                System.out.println("3");
                 if(dataToWrite==null){break;};
                 dataToWrite.execute(message, handler, connectionsObj);   
                 break;
             case 4:
+                System.out.println("4");
                 if(dataToSend==null){break;};
                 dataToSend.sendPacket(message); 
                 break;                
             case 6:
+                System.out.println("6");
                 new DIRQ().execute(message, handler, connectionsObj);
                 break;
             case 7:
+                System.out.println("7");
                 new LOGRQ().execute(message, handler, connectionsObj);
                 break;
             case 8:
+                System.out.println("8");
                 new DELRQ().execute(message, handler, connectionsObj);
                 break;
             case 10:
+                System.out.println("10");
                 new DISC().execute(message, handler, connectionsObj);
                 // if(handler.getName()==null){
                 // setShouldTerminate();
@@ -84,6 +93,7 @@ public class TftpProtocol implements BidiMessagingProtocol <byte[]>  {
                 //}
                 break;
             default:
+            System.out.println("default");
             connectionsObj.send(handler.getId(),new ERROR (4).getError());
         }
     } 

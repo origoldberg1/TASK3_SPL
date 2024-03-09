@@ -3,6 +3,7 @@ import java.io.UnsupportedEncodingException;
 
 public class ERROR 
 {
+  final int INDENT=4;
   private final byte [][] msgList;
   private byte [] errorInByte;
 
@@ -19,25 +20,30 @@ public class ERROR
                 msgList[6] = "User not logged in".getBytes("UTF-8");
                 msgList[7] = "User already logged in".getBytes("UTF-8");
     }catch(UnsupportedEncodingException e){}
-    
 
         //Building the apropiate error
         errorInByte= new byte [msgList[value].length+5];
-        errorInByte[0]=(byte)0x00;
-        errorInByte[1]=(byte)0x05;
-        errorInByte[2]=(byte)0x00;
-        errorInByte[3]=(byte)value;
+        //filling opcode field
+        byte [] opcodeField=Util.intToTwoByte(5);
+        errorInByte[0]=opcodeField[0];
+        errorInByte[1]=opcodeField[1];
+        //filling errorCode field
+        byte [] errorCodeField=Util.intToTwoByte(value);      
+        errorInByte[2]=errorCodeField[0];
+        errorInByte[3]=errorCodeField[1];
+        //filling last byte by zero
         errorInByte[errorInByte.length-1]=(byte)0x00;
+        //filling ErrMsg field
         for(int i=0; i<msgList[value].length; i++)
         {
-             errorInByte[i+4]=msgList[value][i];
+             errorInByte[i+INDENT]=msgList[value][i];
         }
 
     }
 
     public byte [] getError()
     {
-    return errorInByte;
+      return errorInByte;
     }
 }
 

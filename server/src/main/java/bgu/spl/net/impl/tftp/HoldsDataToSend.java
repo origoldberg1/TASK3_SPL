@@ -52,15 +52,21 @@ public class HoldsDataToSend
             if(leftBytes>0){
                 List<Byte> byteList = new ArrayList<>();
                 byte [] packetArr;
-                byteList.add((byte)0); //filling opcode field
-                byteList.add((byte)3); //filling opcode field
-                byteList.add((byte)0); //filling first byte of packet size 
+                //filling opcode field
+                byte [] opcodeField=Util.intToTwoByte(3);
+                byteList.add(opcodeField[0]); 
+                byteList.add(opcodeField[1]); 
+                //filiing size field
+                byte [] sizeField; 
                 if(leftBytes<PACKET_SIZE){
-                    byteList.add((byte)leftBytes); //filling second byte of packet size field
+                    sizeField=Util.intToTwoByte(leftBytes);
+
                 }
                 else{
-                    byteList.add((byte)PACKET_SIZE); //filling second byte of packet size field
-                } 
+                    sizeField=Util.intToTwoByte(PACKET_SIZE); 
+                }
+                byteList.add(sizeField[0]); 
+                byteList.add(sizeField[1]);                  
                 //filling block field
                 byte [] blockField=Util.intToTwoByte(block);
                 byteList.add(blockField[0]);
