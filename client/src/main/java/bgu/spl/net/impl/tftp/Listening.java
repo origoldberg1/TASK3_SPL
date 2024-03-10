@@ -40,10 +40,10 @@ public class Listening implements Runnable{
                 byte[] nextMessage = encdec.decodeNextByte((byte) read);
                 if (nextMessage != null) { 
                     //TODO: remove before submitting
-                    System.out.println("output bytes: (length =)" + nextMessage.length);
-                    for (int i = 0; i < nextMessage.length; i++){
-                        System.err.println(i + ": " + nextMessage[i]);
-                    }
+                    // System.out.println("output bytes: (length =)" + nextMessage.length);
+                    // for (int i = 0; i < nextMessage.length; i++){
+                    //     System.err.println(i + ": " + nextMessage[i]);
+                    // }
                     int opcode = Util.getOpcode(nextMessage);
                     STATE curState = currentCommand.getState();
                     if (curState.equals(STATE.RRQ)){
@@ -53,7 +53,7 @@ public class Listening implements Runnable{
                         handleWRQ(nextMessage, opcode);
                     }
                     else if(curState.equals(STATE.DIRQ)){
-                        handleDELRQ(nextMessage, opcode);
+                        handleDIRQ(nextMessage, opcode);
                     }
                     else if(curState.equals(STATE.LOGRQ)){
                         handleLOGRQ(nextMessage, opcode);
@@ -64,11 +64,12 @@ public class Listening implements Runnable{
                     else if(curState.equals(STATE.DISC)){
                         handleDISC(nextMessage, opcode);
                     }
-                    else{
-                        //TODO: handle illegal opcode?
+                    
+                    if(opcode == BCAST){
+                        handleBCAST(nextMessage);
                     }
 
-                    if(curState.equals(STATE.Unoccupied)){
+                    if(currentCommand.getState().equals(STATE.Unoccupied)){
                         synchronized(waitOnObject){
                             waitOnObject.notifyAll();
                         }
@@ -115,9 +116,6 @@ public class Listening implements Runnable{
             
             case ERROR:
                 handleERROR(nextMessage);
-            
-            default:
-                //TODO: handle?
                 break;
         }
 
@@ -133,9 +131,6 @@ public class Listening implements Runnable{
             
             case ERROR:
                 handleERROR(nextMessage);
-                
-            default:
-                //TODO: handle?
                 break;
         }
     }    
@@ -154,9 +149,6 @@ public class Listening implements Runnable{
                 handleERROR(nextMessage);
                 break;
 
-            default:
-                //TODO: handle?
-                break;
         }
     }
 
@@ -171,10 +163,6 @@ public class Listening implements Runnable{
                 handleERROR(nextMessage);
                 break;
 
-            default:
-                //TODO: handle?
-                break;                
-            
         }
     }    
     public void handleDISC(byte[] nextMessage, int opcode){
@@ -191,11 +179,6 @@ public class Listening implements Runnable{
             case ERROR:
                 handleERROR(nextMessage);
                 break;
-
-            default:
-                //TODO: handle?
-                break;                
-            
         }        
     }
 
@@ -205,8 +188,10 @@ public class Listening implements Runnable{
     }
 
     public void handleBCAST(byte[] nextMessage){
-        System.out.println("BCAST " + nextMessage[2] + " " + Util.extractString(nextMessage, 3));
-        currentCommand.resetFields();       
+        String action;
+        if(nextMessage[2] == 0) {action = "del ";} 
+        else {action = "add ";}
+        System.out.println("BCAST " + action + Util.extractString(nextMessage, 3));
     }
 
     public void handleACK(byte[] nextMessage){

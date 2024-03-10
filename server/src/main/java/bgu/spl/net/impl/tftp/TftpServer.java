@@ -6,7 +6,7 @@ public class TftpServer {
 
     public static void main(String[] args) {
 
-        System.out.println("starting");
+        //System.out.println("starting");
                 // you can use any server... 
         Server.threadPerClient(
                 7777, //port

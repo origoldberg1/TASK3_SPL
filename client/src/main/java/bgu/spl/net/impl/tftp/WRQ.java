@@ -1,5 +1,6 @@
 package bgu.spl.net.impl.tftp;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Path;
@@ -22,6 +23,12 @@ public class WRQ implements Command{
     public void execute() {
         //Path filePath = Paths.get(System.getProperty("user.dir")).resolve("client").resolve(getFileName(userInput));
         Path filePath = Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName);
+        File file = new File(filePath.toString());
+        if(!file.exists()){ //file already exists
+            System.out.println("file does not exists");
+            currentCommand.resetFields();
+            return;
+        }
         currentCommand.setFilePath(filePath);
         currentCommand.setState(STATE.WRQ);
         currentCommand.setSendData(new SendData(fileName, outputStream));

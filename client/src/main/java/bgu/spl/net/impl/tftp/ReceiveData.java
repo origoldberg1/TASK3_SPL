@@ -28,7 +28,7 @@ public class ReceiveData {
     }
 
     public boolean processPacket(byte[] packet){
-        System.out.println("process packet");
+    //    System.out.println("process packet");
         packet = extractData(packet);
         int indent = data.length;
         resize(packet.length);

@@ -28,25 +28,23 @@ public class Keyboard implements Runnable{
     public void run() {
         // TODO Auto-generated method stub
         Scanner scanner = new Scanner(System.in);
-        String fileName;
         while (! terminate) {
             if (scanner.hasNextLine()) {
                 String userInput = scanner.nextLine();
                 Command command = new DIRQ(outputStream, currentCommand); //for compilition purpose
-                switch (Util.getOpcodeValue(userInput.split(" ")[0])){
+                int opcode = Util.getOpcodeValue(userInput.split(" ")[0]);
+                switch (opcode){
                     case 1:
-                        fileName = Util.getFileName(userInput);
-                        command = new RRQ(outputStream, fileName, currentCommand);
+                        command = new RRQ(outputStream, Util.getFileName(userInput), currentCommand);
                         break;
                     case 2:
-                        fileName = Util.getFileName(userInput);
-                        command = new WRQ(outputStream, fileName, currentCommand); 
+                        command = new WRQ(outputStream, Util.getFileName(userInput), currentCommand); 
                         break;
                     case 6:
                         command = new DIRQ(outputStream, currentCommand);
                         break;
                     case 7:
-                        command = new LOGRQ(outputStream, userInput.split(" ")[1]);
+                        command = new LOGRQ(outputStream, userInput.split(" ")[1], currentCommand);
                         break;
                     case 8:
                         command = new DELRQ(outputStream, Util.getFileName(userInput));
@@ -65,10 +63,12 @@ public class Keyboard implements Runnable{
                         break; //TODO: check what to do in this case
                 }
                 command.execute();
-                synchronized(waitOnObject){
-                    try {
-                        waitOnObject.wait();
-                    } catch (InterruptedException e) {};
+                if(!currentCommand.getState().equals(STATE.Unoccupied)){
+                    synchronized(waitOnObject){
+                        try {
+                            waitOnObject.wait();
+                        } catch (InterruptedException e) {};
+                    }
                 }
             }
         }

@@ -33,10 +33,10 @@ public class DELRQ implements Command<byte[]>
             return true;
         }
         //error 4- illegal TFTP operation- unknown opcode
-        if((arg[1]>7 || arg[1]<1 ||arg.length <= 1)){ 
-            connectionsObject.send(handler.getId(),new ERROR (4).getError());
-            return true;
-        }
+        // if((arg[1]>7 || arg[1]<1 ||arg.length <= 1)){ 
+        //     connectionsObject.send(handler.getId(),new ERROR (4).getError());
+        //     return true;
+        // }
         // error 6- user not logged in
         if(arg[1] != 7 && handler.getName()==null){ 
             connectionsObject.send(handler.getId(), new ERROR(6).getError());

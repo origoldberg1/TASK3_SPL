@@ -29,7 +29,7 @@ public class Util {
     }
 
     public static void writeFile(String fileFullPath, byte[] bytes) throws FileNotFoundException, IOException {
-        System.out.println("in writeFile method");
+        //System.out.println("in writeFile method");
 
         try{
             FileOutputStream fos = new FileOutputStream(fileFullPath);

@@ -58,22 +58,22 @@ public class WRQ implements Command<byte[]>
             try {
                 file.createNewFile();
                 //updating protocol there is a path to write
-                HoldsDataToWrite holdsDataTowrite= new HoldsDataToWrite("server/Files/"+fileName);
+                HoldsDataToWrite holdsDataTowrite= new HoldsDataToWrite("server/Files/"+fileName, bytesFileName);
                 ((TftpProtocol)(handler.getProtocol())).setDataToWrite(holdsDataTowrite);
-                //starting broadcast
-                BCAST bcast = new BCAST(bytesFileName, (byte)0x01);
-                byte [] bcastMsg= bcast.getBcastMsg();
-                ConcurrentHashMap <Integer, BlockingConnectionHandler<byte[]>> connectionsHash =connectionsObject.getCopyHashMap();                
-                for(int i=0; i<connectionsHash.size(); i++)
-                {
-                    BlockingConnectionHandler <byte []> ch=connectionsHash.get(i);
-                    if(ch.getName()!=null) //means this CH is logged in
-                    {
-                        int id=ch.getId();
-                        connectionsObject.send(id,bcastMsg);
-                    }
-                }
-                //finishing broadcast
+                // //starting broadcast
+                // BCAST bcast = new BCAST(bytesFileName, (byte)0x01);
+                // byte [] bcastMsg= bcast.getBcastMsg();
+                // ConcurrentHashMap <Integer, BlockingConnectionHandler<byte[]>> connectionsHash =connectionsObject.getCopyHashMap();                
+                // for(int i=0; i<connectionsHash.size(); i++)
+                // {
+                //     BlockingConnectionHandler <byte []> ch=connectionsHash.get(i);
+                //     if(ch.getName()!=null) //means this CH is logged in
+                //     {
+                //         int id=ch.getId();
+                //         connectionsObject.send(id,bcastMsg);
+                //     }
+                // }
+                // //finishing broadcast
                 byte [] ackMsg=new ACK(new byte[]{0,0}).getAck();
                 connectionsObject.send(handler.getId(), ackMsg);
             }catch(IOException e){connectionsObject.send(handler.getId(), new ERROR(5).getError());}  

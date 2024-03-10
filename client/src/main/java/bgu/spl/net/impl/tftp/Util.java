@@ -104,7 +104,7 @@ public class Util {
      }
 
      public static String extractString(byte[] msg, int indent){
-        byte[] fileNameBytes = new byte[msg.length - 4];
+        byte[] fileNameBytes = new byte[msg.length - indent];
         for (int i = 0; i < fileNameBytes.length; i++) {
             fileNameBytes[i] = msg[i + indent];
         }

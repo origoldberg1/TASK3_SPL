@@ -10,16 +10,22 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 //this class implements all about writing to files- after WRQ opcode
 public class HoldsDataToWrite implements Command<byte[]> {
     
     List<Byte> byteList;
     String fileToWritePath;
-    public HoldsDataToWrite(String fileToWritePath)
+    byte [] bcastMsg;
+
+    public HoldsDataToWrite(String fileToWritePath, byte [] bytesFileName)
     { 
         this.byteList= new ArrayList<>();
         this.fileToWritePath=fileToWritePath;
+        BCAST bcast = new BCAST(bytesFileName, (byte)0x01);
+        bcastMsg= bcast.getBcastMsg();
+        
     }
     
     public String getFileToWritePath()
@@ -63,13 +69,38 @@ public class HoldsDataToWrite implements Command<byte[]> {
                 byteList.add(packet[i+6]); //data information starts at sixth cell in Data Opcode
             }
             if(packet.length-6<512){ //means this is the last packet to write
+                //writes to file
                 byte [] buffer= Util.convertListToArr(byteList);
                 try{Util.writeFile(fileToWritePath, buffer);}catch(IOException e){}
                 ((TftpProtocol)handler.getProtocol()).setDataToWrite(null);
+                //sending ACK
+                byte [] ackMsg=new ACK(new byte[]{packet[4],packet[5]}).getAck();
+                connectionsObject.send(handler.getId(),ackMsg);
+                //Sending broadccast to all loggedin users
+                sendBroadcast(packet, handler, connectionsObject);
             }
+            else{ //means this is not the last packet to write
             byte [] ackMsg=new ACK(new byte[]{packet[4],packet[5]}).getAck();
             connectionsObject.send(handler.getId(),ackMsg);
+            }
         }  
+    }
+
+    private void sendBroadcast(byte[] packet, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject)
+    {
+        //starting broadcast
+        ConcurrentHashMap <Integer, BlockingConnectionHandler<byte[]>> connectionsHash =connectionsObject.getCopyHashMap();                
+        for(int i=0; i<connectionsHash.size(); i++)
+        {
+            BlockingConnectionHandler <byte []> ch=connectionsHash.get(i);
+            if(ch.getName()!=null) //means this CH is logged in
+            {
+                int id=ch.getId();
+                connectionsObject.send(id,this.bcastMsg);
+            }
+        }
+        //finishing broadcast
+        
     }
 
 }
