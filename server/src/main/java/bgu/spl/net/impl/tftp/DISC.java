@@ -10,16 +10,21 @@ public class DISC implements Command<byte[]> {
             connectionsObject.send(handler.getId(),new ERROR (4).getError());
             return true;
         }
+        //error 6- user not logged in
+        if(arg[1] != 7 && handler.getName()==null){
+            connectionsObject.send(handler.getId(), new ERROR(6).getError());
+            return true;
+        }
         return false;
     }
 
     @Override
     public void execute(byte[] arg, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject) 
     {
-        //remaek- according to instructions, if the client isn't loggedin, he doesn't send a  DISC packet
         if(!errorFound(arg, handler, connectionsObject))
         {
             connectionsObject.disconnect(handler.getId());
+            connectionsObject.send(handler.getId(), new ACK(new byte[]{0,0}).getAck());
         }
         
         // connectionsObject.disconnect(handler.getId());

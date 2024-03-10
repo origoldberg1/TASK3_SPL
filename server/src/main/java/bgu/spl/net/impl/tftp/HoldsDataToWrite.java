@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 //this class implements all about writing to files- after WRQ opcode
@@ -90,9 +91,9 @@ public class HoldsDataToWrite implements Command<byte[]> {
     {
         //starting broadcast
         ConcurrentHashMap <Integer, BlockingConnectionHandler<byte[]>> connectionsHash =connectionsObject.getCopyHashMap();                
-        for(int i=0; i<connectionsHash.size(); i++)
+        for(Map.Entry<Integer, BlockingConnectionHandler<byte[]>> entry : connectionsHash.entrySet())
         {
-            BlockingConnectionHandler <byte []> ch=connectionsHash.get(i);
+            BlockingConnectionHandler<byte[]> ch = entry.getValue();
             if(ch.getName()!=null) //means this CH is logged in
             {
                 int id=ch.getId();

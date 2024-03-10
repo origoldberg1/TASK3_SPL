@@ -11,7 +11,7 @@ public class TftpConnections implements Connections<byte[]>{
     ConcurrentHashMap<Integer, BlockingConnectionHandler<byte[]>> connections = new ConcurrentHashMap<>(); //we think integer is the id and the other one is the connectionHandler
 
     @Override
-    public boolean connect(int connectionId, BlockingConnectionHandler<byte[]> handler) {
+    public synchronized boolean connect(int connectionId, BlockingConnectionHandler<byte[]> handler) {
         connections.put(connectionId, handler);
         return true;
     }
@@ -28,9 +28,9 @@ public class TftpConnections implements Connections<byte[]>{
     }
 
     @Override
-    public void disconnect(int connectionId){ //we didn't use this method
+    public synchronized void disconnect(int connectionId){ //we didn't use this method
         BlockingConnectionHandler handlerToDisc=connections.get(connectionId);
-        connections.remove(connectionId);
+        handlerToDisc.setName(null); //"remove" client from logged-in list
         ((TftpProtocol)handlerToDisc.getProtocol()).setShouldTerminate(); //in order to finish procees gracefully
     }
 
