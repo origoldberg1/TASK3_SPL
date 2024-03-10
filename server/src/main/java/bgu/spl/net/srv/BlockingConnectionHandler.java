@@ -18,9 +18,9 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     private BufferedInputStream in;
     private BufferedOutputStream out;
     private volatile boolean connected = true;
-    static volatile int connectionCounter = 0;
-    private volatile int id; //we add this
-    private volatile String userName; //we add this
+    static volatile int connectionCounter = 0; //TODO: move it to protocol?
+    private volatile int id; //TODO: move it to protocol? 
+    private volatile String userName; //TODO: move it to protocol?
     // private volatile String fileToWritePath; //we add it
 
     public BlockingConnectionHandler(Socket sock, Connections<T> connections, MessageEncoderDecoder<T> reader, MessagingProtocol<T> protocol) {
@@ -98,6 +98,10 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
         return this.id;
     }
 
+    public void disconnect()
+    {
+        connected=false;
+    }
     // public String getFileToWritePath(){ //we add this method
     //     return fileToWritePath;
     // }
