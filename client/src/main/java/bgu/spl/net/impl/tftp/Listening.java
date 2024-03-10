@@ -183,7 +183,7 @@ public class Listening implements Runnable{
     }
 
     public void handleERROR(byte[] nextMessage){
-        System.out.println("ERROR " + Util.twoByteToInt(new byte[]{nextMessage[2], nextMessage[3]}) + Util.extractString(nextMessage, 4));
+        System.out.println("ERROR " + Util.twoByteToInt(new byte[]{nextMessage[2], nextMessage[3]}));
         currentCommand.resetFields();
     }
 

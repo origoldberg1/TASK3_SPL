@@ -47,7 +47,7 @@ public class Keyboard implements Runnable{
                         command = new LOGRQ(outputStream, userInput.split(" ")[1], currentCommand);
                         break;
                     case 8:
-                        command = new DELRQ(outputStream, Util.getFileName(userInput));
+                        command = new DELRQ(outputStream, Util.getFileName(userInput), currentCommand);
                         break;
                     case 10:
                         synchronized(this){
@@ -57,10 +57,10 @@ public class Keyboard implements Runnable{
                                 //TODO: call a function that closes the client program
                             }
                         }
-                        new DISC(outputStream).execute();
+                        new DISC(outputStream, currentCommand).execute();
                         break;
                     default:
-                        break; //TODO: check what to do in this case
+                        currentCommand.resetFields();
                 }
                 command.execute();
                 if(!currentCommand.getState().equals(STATE.Unoccupied)){

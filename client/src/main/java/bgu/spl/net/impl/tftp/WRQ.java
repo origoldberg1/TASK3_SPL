@@ -25,7 +25,7 @@ public class WRQ implements Command{
         Path filePath = Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName);
         File file = new File(filePath.toString());
         if(!file.exists()){ //file already exists
-            System.out.println("file does not exists");
+            System.out.println("file does not exist");
             currentCommand.resetFields();
             return;
         }
