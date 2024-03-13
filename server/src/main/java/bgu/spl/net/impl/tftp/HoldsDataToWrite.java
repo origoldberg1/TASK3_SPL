@@ -91,9 +91,10 @@ public class HoldsDataToWrite implements Command<byte[]> {
         ConcurrentHashMap <Integer, BlockingConnectionHandler<byte[]>> connectionsHash =connectionsObject.getCopyHashMap();                
         for(Map.Entry<Integer, BlockingConnectionHandler<byte[]>> entry : connectionsHash.entrySet())
         {
+            TftpProtocol chProtocol=(TftpProtocol)entry.getValue().getProtocol();
             if(protocol.getUserName()!=null) //means this CH is logged in
             {
-                int id=protocol.getId();
+                int id=chProtocol.getId();
                 connectionsObject.send(id,this.bcastMsg);
             }
         }

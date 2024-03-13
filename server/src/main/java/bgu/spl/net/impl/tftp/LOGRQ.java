@@ -10,6 +10,11 @@ public class LOGRQ implements Command<byte[]>
     private boolean errorFound(byte[] arg, TftpProtocol protocol, TftpConnections connectionsObject)
     {
         //error 7- user already logged in
+        if(protocol.getUserName()!=null)
+        {
+            connectionsObject.send(protocol.getId(), new ERROR(7).getError());
+            return true;
+        }
         byte [] bytesUserName= new byte[arg.length-2];
         final int INDENT = 2;
         for(int i = 0; i < bytesUserName.length; i++)
