@@ -1,5 +1,7 @@
 package bgu.spl.net.impl.tftp;
 import bgu.spl.net.srv.BlockingConnectionHandler;
+
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -71,6 +73,8 @@ public class HoldsDataToWrite implements Command<byte[]> {
             if(packet.length-6<512){ //means this is the last packet to write
                 //writes to file
                 byte [] buffer= Util.convertListToArr(byteList);
+                try{ Util.writeFile(fileToWritePath, buffer);}
+                catch(IOException e){}
                 protocol.setDataToWrite(null);
                 //sending ACK
                 byte [] ackMsg=new ACK(new byte[]{packet[4],packet[5]}).getAck();
