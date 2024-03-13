@@ -8,10 +8,4 @@ public interface Connections<T> {
 
     void disconnect(int connectionId);
 
-    // boolean isExistByUserName(String userName); //we add this method
-
-    // ConcurrentHashMap<Integer, BlockingConnectionHandler<byte[]>> getConnectionsHash(); //we add this method
-
-    //  boolean isExistById(int id);
-
 }

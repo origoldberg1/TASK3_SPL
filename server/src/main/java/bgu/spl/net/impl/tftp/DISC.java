@@ -19,22 +19,7 @@ public class DISC implements Command<byte[]> {
             connectionsObject.send(handler.getId(), new ACK(new byte[]{0,0}).getAck());
         }
         connectionsObject.disconnect(handler.getId());
-    
         
-        // connectionsObject.disconnect(handler.getId());
-        // if(handler.getName()==null) //isn't logged in
-        // {
-            
-        // }
-        // else //is logged in
-        // {
-        //     connectionsObject.send(handler.getId(), new ACK(new byte[]{0,0}).getAck());
-        // }
-        // else
-        // {
-        //     connectionsObject.send(handler.getId(), new ACK(new byte[]{0,0}).getAck());
-        // }
-
     }
     
 }

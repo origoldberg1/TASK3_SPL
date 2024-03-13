@@ -32,6 +32,7 @@ public class TftpConnections implements Connections<byte[]>{
         BlockingConnectionHandler<byte[]> handlerToDisc=connections.get(connectionId);
         connections.remove(connectionId); //"remove" client from logged-in list
         ((TftpProtocol)handlerToDisc.getProtocol()).setShouldTerminate(); //in order to finish procees gracefully
+        handlerToDisc.disconnect(); //changes connected to false;
     }
 
     public synchronized boolean isExistByUserName(String userName){ //we add this method in order to check if this userName is already connected

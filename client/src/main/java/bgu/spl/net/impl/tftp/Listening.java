@@ -186,7 +186,7 @@ public class Listening implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
     }
 
     public void handleERROR(byte[] nextMessage){

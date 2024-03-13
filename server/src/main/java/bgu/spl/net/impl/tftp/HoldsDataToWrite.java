@@ -80,8 +80,8 @@ public class HoldsDataToWrite implements Command<byte[]> {
                 sendBroadcast(packet, handler, connectionsObject);
             }
             else{ //means this is not the last packet to write
-            byte [] ackMsg=new ACK(new byte[]{packet[4],packet[5]}).getAck();
-            connectionsObject.send(handler.getId(),ackMsg);
+                byte [] ackMsg=new ACK(new byte[]{packet[4],packet[5]}).getAck();
+                connectionsObject.send(handler.getId(),ackMsg);
             }
         }  
     }

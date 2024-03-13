@@ -28,17 +28,16 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
         this.connections = connections;
         this.encdec = reader;
         this.protocol = protocol;
-        this.id=connectionCounter; //make sure with ori it is ok to increase connectionCounter just in run method
+        this.id = connectionCounter ++ ; 
         this.userName=null; //we add it
-        this.connections.connect(connectionCounter, this);
+        this.connections.connect(id, this);
 
     }
 
     @Override
     public void run() {
         try (Socket sock = this.sock) {
-            this.protocol.start(connectionCounter, connections, this); //just for automatic closing
-            connectionCounter ++;
+            this.protocol.start(id, connections, this); //just for automatic closing
             int read;
 
             in = new BufferedInputStream(sock.getInputStream());
@@ -53,7 +52,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
         } catch (IOException ex) { 
             ex.printStackTrace();
         }
-
+        System.out.println("blocking connection handle " + id + " finished");
     }
 
     @Override
