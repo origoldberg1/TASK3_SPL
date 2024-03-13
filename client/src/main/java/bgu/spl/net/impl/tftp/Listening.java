@@ -3,7 +3,7 @@ package bgu.spl.net.impl.tftp;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.concurrent.BlockingQueue;
+import java.net.Socket;
 
 import bgu.spl.net.api.MessageEncoderDecoder;
 
@@ -16,19 +16,23 @@ public class Listening implements Runnable{
     CurrentCommand currentCommand;
     Keyboard keyboard;
     Object waitOnObject;
+
+
+    private Socket sock;
     final int DATA = 3;
     final int ACK = 4;
     final int ERROR = 5;
     final int BCAST = 9;
 
     
-    public Listening(InputStream inputStream, CurrentCommand currentCommand, OutputStream outputStream, Keyboard keyboard, Object waitOnObject) {
+    public Listening(InputStream inputStream, CurrentCommand currentCommand, OutputStream outputStream, Keyboard keyboard, Object waitOnObject, Socket sock) {
         this.inputStream = inputStream;
         this.encdec = new TftpClientEncoderDecoder();
         this.currentCommand = currentCommand;
         this.outputStream = outputStream;
         this.keyboard = keyboard;
         this.waitOnObject = waitOnObject;
+        this.sock = sock;
     }
 
     
@@ -69,7 +73,7 @@ public class Listening implements Runnable{
                         handleBCAST(nextMessage);
                     }
 
-                    if(currentCommand.getState().equals(STATE.Unoccupied)){
+                    if(!terminate && currentCommand.getState().equals(STATE.Unoccupied)){
                         synchronized(waitOnObject){
                             waitOnObject.notifyAll();
                         }
@@ -79,6 +83,7 @@ public class Listening implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
+        
     }
 
     public void handleRRQ(byte[] nextMessage, int opcode){
@@ -139,9 +144,6 @@ public class Listening implements Runnable{
         switch (opcode) {
             case ACK:
                 handleACK(nextMessage);
-                synchronized(keyboard){
-                    keyboard.loggedIn = true;
-                }
                 currentCommand.resetFields();
                 break;
             
@@ -166,20 +168,25 @@ public class Listening implements Runnable{
         }
     }    
     public void handleDISC(byte[] nextMessage, int opcode){
-        
         switch (opcode) {
             case ACK:
                 handleACK(nextMessage);
-                currentCommand.resetFields();
-                synchronized(keyboard){
-                    keyboard.terminate = true;
-                } 
                 break;
-            
+                
             case ERROR:
                 handleERROR(nextMessage);
                 break;
-        }        
+            }        
+
+        currentCommand.resetFields();
+        terminate = true;
+
+        try {
+            sock.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
     }
 
     public void handleERROR(byte[] nextMessage){

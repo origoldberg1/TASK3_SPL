@@ -53,7 +53,6 @@ public class TftpProtocol implements BidiMessagingProtocol <byte[]>  {
         switch (message[1])
         {
             case 1:
-                //System.out.println("1");
                 new RRQ().execute(message, handler, connectionsObj);
                 break;
             case 2:
@@ -61,40 +60,27 @@ public class TftpProtocol implements BidiMessagingProtocol <byte[]>  {
                 //System.out.println("2");
                 break;
             case 3:
-                //System.out.println("3");
                 if(dataToWrite==null){break;};
                 dataToWrite.execute(message, handler, connectionsObj);   
                 break;
             case 4:
-                //System.out.println("4");
                 System.out.println("ACK " + Util.twoByteToInt(new byte[]{message[2], message[3]}));
                 if(dataToSend==null){break;};
                 dataToSend.sendPacket(message); 
                 break;                
             case 6:
-                //System.out.println("6");
                 new DIRQ().execute(message, handler, connectionsObj);
                 break;
             case 7:
-                //System.out.println("7");
                 new LOGRQ().execute(message, handler, connectionsObj);
                 break;
             case 8:
-                //System.out.println("8");
                 new DELRQ().execute(message, handler, connectionsObj);
                 break;
             case 10:
-                //System.out.println("10");
                 new DISC().execute(message, handler, connectionsObj);
-                // if(handler.getName()==null){
-                // setShouldTerminate();
-                // }
-                // else{ //is logged in
-                // connectionsObj.send(handler.getId(), new ACK(new byte[]{0,0}).getAck());
-                //}
                 break;
             default:
-            //System.out.println("default");
             connectionsObj.send(handler.getId(),new ERROR (4).getError());
         }
     } 

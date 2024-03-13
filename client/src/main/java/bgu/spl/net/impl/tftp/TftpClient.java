@@ -22,14 +22,26 @@ public class TftpClient {
         CurrentCommand currentCommand = new CurrentCommand();
         currentCommand.setState(STATE.Unoccupied);
 
-        final Object wainOnObject = new Object();
+        final Object waitOnObject = new Object();
         final CommandParser commandParser = new CommandParser();
-        final Keyboard keyborad = new Keyboard(commandParser, out, currentCommand, wainOnObject);
-        final Listening listening = new Listening(in, currentCommand, out, keyborad, wainOnObject);
+        final Keyboard keyborad = new Keyboard(commandParser, out, currentCommand, waitOnObject);
+        final Listening listening = new Listening(in, currentCommand, out, keyborad, waitOnObject, sock);
 
-        new Thread(keyborad).start();
-        new Thread(listening).start();
+        Thread keyboardThread = new Thread(keyborad); 
+        Thread listeningThread = new Thread(listening);
 
+        keyboardThread.start();
+        listeningThread.start();
+
+
+        try {
+            keyboardThread.join();
+            listeningThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.exit(0);
     }
 
 }

@@ -10,17 +10,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import bgu.spl.net.impl.rci.Command;
 import bgu.spl.net.srv.BlockingConnectionHandler;
 
 public class DIRQ implements Command<byte[]> {
      private boolean errorFound(byte[] arg, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject)
     {
-        //error 4- illegal TETP operation, unknown opcode
-        if((arg[1]>7 || arg[1]<1 ||arg.length <= 1)){
-            connectionsObject.send(handler.getId(),new ERROR (4).getError());
-            return true;
-        }
         //error 6- user not logged in
         if(arg[1] != 7 && handler.getName()==null){
             connectionsObject.send(handler.getId(), new ERROR(6).getError());

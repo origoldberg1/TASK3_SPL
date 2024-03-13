@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import bgu.spl.net.impl.rci.Command;
+
 import bgu.spl.net.srv.BlockingConnectionHandler;
 import java.util.ArrayList;
 
@@ -33,11 +33,6 @@ public class RRQ implements Command<byte[]>
         if(!Files.isReadable(filePath))
         {
             connectionsObject.send(handler.getId() ,new ERROR(2).getError());
-            return true;
-        }
-        //error 4- illegal TETP operation, unknown opcode
-        if((arg[1]>7 || arg[1]<1 ||arg.length <= 1)){
-            connectionsObject.send(handler.getId(),new ERROR (4).getError());
             return true;
         }
         //error 6- user not logged in

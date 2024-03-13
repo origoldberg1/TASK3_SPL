@@ -20,7 +20,7 @@ public class TftpConnections implements Connections<byte[]>{
     public synchronized boolean send(int connectionId, byte[] msg)  {
         ConnectionHandler<byte[]> handler = connections.get(connectionId);
         if(handler == null){
-            System.err.println("no handler for this id");
+        //    System.err.println("no handler for this id");
             return false;
         }
         handler.send(msg);
@@ -28,9 +28,9 @@ public class TftpConnections implements Connections<byte[]>{
     }
 
     @Override
-    public synchronized void disconnect(int connectionId){ //we didn't use this method
-        BlockingConnectionHandler handlerToDisc=connections.get(connectionId);
-        handlerToDisc.setName(null); //"remove" client from logged-in list
+    public synchronized void disconnect(int connectionId){ 
+        BlockingConnectionHandler<byte[]> handlerToDisc=connections.get(connectionId);
+        connections.remove(connectionId); //"remove" client from logged-in list
         ((TftpProtocol)handlerToDisc.getProtocol()).setShouldTerminate(); //in order to finish procees gracefully
     }
 

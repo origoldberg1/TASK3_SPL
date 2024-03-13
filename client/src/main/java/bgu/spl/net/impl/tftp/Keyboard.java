@@ -8,15 +8,14 @@ import java.util.Scanner;
 import bgu.spl.net.api.Command;
 
 public class Keyboard implements Runnable{
-    boolean terminate = false;
+    volatile boolean terminate = false;
     Util.State state = Util.State.Simple; 
     CommandParser commandParser;
     OutputStream outputStream;
     CurrentCommand currentCommand;
-    boolean loggedIn = false;
     Object waitOnObject;
 
-    
+
     public Keyboard(CommandParser commandParser, OutputStream outputStream, CurrentCommand currentCommand, Object waitOnObject) {
         this.commandParser = commandParser;
         this.outputStream = outputStream;
@@ -31,7 +30,7 @@ public class Keyboard implements Runnable{
         while (! terminate) {
             if (scanner.hasNextLine()) {
                 String userInput = scanner.nextLine();
-                Command command = new DIRQ(outputStream, currentCommand); //for compilition purpose
+                Command command = null;
                 int opcode = Util.getOpcodeValue(userInput.split(" ")[0]);
                 switch (opcode){
                     case 1:
@@ -50,20 +49,16 @@ public class Keyboard implements Runnable{
                         command = new DELRQ(outputStream, Util.getFileName(userInput), currentCommand);
                         break;
                     case 10:
-                        synchronized(this){
-                            if(!loggedIn){
-                                terminate = true;
-                                break;
-                                //TODO: call a function that closes the client program
-                            }
-                        }
-                        new DISC(outputStream, currentCommand).execute();
+                        command = new DISC(outputStream, currentCommand);
+                        terminate = true;
                         break;
                     default:
                         currentCommand.resetFields();
                 }
-                command.execute();
-                if(!currentCommand.getState().equals(STATE.Unoccupied)){
+                if(command != null){
+                    command.execute();
+                }
+                if(!terminate && !currentCommand.getState().equals(STATE.Unoccupied)){
                     synchronized(waitOnObject){
                         try {
                             waitOnObject.wait();
@@ -73,9 +68,7 @@ public class Keyboard implements Runnable{
             }
         }
         scanner.close();
+
     }
-
-
-
 
 }

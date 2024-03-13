@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.Socket;
 
+import bgu.spl.net.impl.tftp.Command;
+
 public class RCIClient implements Closeable {
 
     private final ObjectEncoderDecoder encdec;

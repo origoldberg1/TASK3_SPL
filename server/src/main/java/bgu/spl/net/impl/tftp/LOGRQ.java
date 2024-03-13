@@ -4,17 +4,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import bgu.spl.net.impl.rci.Command;
 import bgu.spl.net.srv.BlockingConnectionHandler;
 public class LOGRQ implements Command<byte[]> 
 {
     private boolean errorFound(byte[] arg, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject)
     {
-        //error 4- illegal TETP operation, unknown opcode
-        if((arg[1]>7 || arg[1]<1 ||arg.length <= 1)){
-            connectionsObject.send(handler.getId(),new ERROR (4).getError());
-            return true;
-        }
         //error 7- user already logged in
         byte [] bytesUserName= new byte[arg.length-2];
         final int INDENT = 2;

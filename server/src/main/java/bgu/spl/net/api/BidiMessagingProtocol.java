@@ -15,4 +15,5 @@ public interface BidiMessagingProtocol<T> extends MessagingProtocol<T>  {
      * @return true if the connection should be terminated
      */
     boolean shouldTerminate();
+
 }

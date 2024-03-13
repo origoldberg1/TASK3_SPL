@@ -1,5 +1,4 @@
 package bgu.spl.net.impl.tftp;
-import bgu.spl.net.impl.rci.Command;
 import bgu.spl.net.srv.BlockingConnectionHandler;
 import java.io.FileOutputStream;
 import java.io.IOException;

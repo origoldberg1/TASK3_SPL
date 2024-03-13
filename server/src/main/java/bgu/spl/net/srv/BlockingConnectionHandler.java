@@ -30,7 +30,6 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
         this.protocol = protocol;
         this.id=connectionCounter; //make sure with ori it is ok to increase connectionCounter just in run method
         this.userName=null; //we add it
-        // this.fileToWritePath=null; //we add it
         this.connections.connect(connectionCounter, this);
 
     }
@@ -49,13 +48,8 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
                 T nextMessage = encdec.decodeNextByte((byte) read);
                 if (nextMessage != null) { //full packet acccepted
                     protocol.process(nextMessage);
-                    // if (response != null) { //means we got al packet from encdec?
-                    //     out.write(encdec.encode(response));
-                    //     out.flush();
-                    // }
                 }
             }
-            close();
         } catch (IOException ex) { 
             ex.printStackTrace();
         }
@@ -63,9 +57,12 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     }
 
     @Override
-    public void close() throws IOException {
-        connected = false;
-        sock.close();
+    public void close(){
+        try {
+            sock.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -98,20 +95,11 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
         return this.id;
     }
 
-    public void disconnect()
-    {
+    public void disconnect(){
         connected=false;
     }
-    // public String getFileToWritePath(){ //we add this method
-    //     return fileToWritePath;
-    // }
-    
-    // public synchronized void setFileToWritePath(String fileToWritePath){
-    //    this.fileToWritePath=fileToWritePath;
-    // }
 
-    public MessagingProtocol<T> getProtocol() //we add that
-    {
+    public MessagingProtocol<T> getProtocol(){ //we add that
         return protocol;
     }
 }

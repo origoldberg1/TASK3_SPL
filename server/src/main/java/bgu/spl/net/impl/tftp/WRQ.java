@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.ConcurrentHashMap;
-import bgu.spl.net.impl.rci.Command;
+
 import bgu.spl.net.srv.BlockingConnectionHandler;
 
 public class WRQ implements Command<byte[]> 
@@ -22,11 +22,6 @@ public class WRQ implements Command<byte[]>
         }
         String fileName = new String(bytesFileName, StandardCharsets.UTF_8);
         Path filePath = Paths.get("server/Files/"+fileName);
-        //error 4- illegal TETP operation, unknown opcode
-        if((arg[1]>7 || arg[1]<1 ||arg.length <= 1)){
-            connectionsObject.send(handler.getId(),new ERROR (4).getError());
-            return true;
-        }
         //error 5- file already exists
         if(Files.exists(filePath))
         {

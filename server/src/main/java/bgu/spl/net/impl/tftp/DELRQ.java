@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.ConcurrentHashMap;
-import bgu.spl.net.impl.rci.Command;
+
 import bgu.spl.net.srv.BlockingConnectionHandler;
 
 public class DELRQ implements Command<byte[]> 
@@ -32,11 +32,6 @@ public class DELRQ implements Command<byte[]>
             connectionsObject.send(handler.getId(),new ERROR (2).getError());
             return true;
         }
-        //error 4- illegal TFTP operation- unknown opcode
-        // if((arg[1]>7 || arg[1]<1 ||arg.length <= 1)){ 
-        //     connectionsObject.send(handler.getId(),new ERROR (4).getError());
-        //     return true;
-        // }
         // error 6- user not logged in
         if(arg[1] != 7 && handler.getName()==null){ 
             connectionsObject.send(handler.getId(), new ERROR(6).getError());
@@ -62,6 +57,9 @@ public class DELRQ implements Command<byte[]>
                 //delete the file
                 Path filePath = Paths.get("server/Files/"+fileName);
                 Files.delete(filePath); 
+                
+                connectionsObject.send(handler.getId(),new ACK(new byte[]{0,0}).getAck());
+                
                 //starting broadcast
                 byte [] bcastMsg= new BCAST(bytesFileName, (byte)0x00).getBcastMsg();
                 ConcurrentHashMap <Integer, BlockingConnectionHandler<byte[]>> connectionsHash =connectionsObject.getConnectionsHash();
@@ -82,7 +80,6 @@ public class DELRQ implements Command<byte[]>
                     }
                 }
                 //finishing broadCast
-                connectionsObject.send(handler.getId(),new ACK(new byte[]{0,0}).getAck());
             } catch(IOException e){connectionsObject.send(handler.getId() ,new ERROR(1).getError());}
         }
     }   

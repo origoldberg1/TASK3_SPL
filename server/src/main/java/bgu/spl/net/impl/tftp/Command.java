@@ -1,5 +1,4 @@
-package bgu.spl.net.impl.rci;
-import bgu.spl.net.impl.tftp.TftpConnections;
+package bgu.spl.net.impl.tftp;
 import bgu.spl.net.srv.BlockingConnectionHandler;
 public interface Command<T>{
 
