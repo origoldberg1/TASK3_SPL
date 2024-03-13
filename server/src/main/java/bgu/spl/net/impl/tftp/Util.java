@@ -14,7 +14,8 @@ public class Util {
     }
     
     public static int twoByteToInt(byte [] bytes){
-        return ( int ) ((( int ) bytes [0]) << 8 | ( int ) ( bytes [1]) );
+        return (short) (((short) bytes[0]) << 8 | (short) (bytes[1]) & 0x00ff);
+        //return ( int ) ((( int ) bytes [0]) << 8 | ( int ) ( bytes [1]) );
     }
 
     public static byte[] readFile(String fileFullPath) throws IOException {
