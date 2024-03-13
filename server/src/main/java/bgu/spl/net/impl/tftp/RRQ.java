@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class RRQ implements Command<byte[]> 
 {
-    private boolean errorFound(byte[] arg, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject)
+    private boolean errorFound(byte[] arg, TftpProtocol protocol, TftpConnections connectionsObject)
     {
         //error 1- file not found
         byte [] bytesFileName= new byte[arg.length-2];//Acording to Ori we get args without the last byte 
@@ -26,18 +26,18 @@ public class RRQ implements Command<byte[]>
         Path filePath = Paths.get("server/Files/"+fileName);
         if(!Files.exists(filePath))
         {
-            connectionsObject.send(handler.getId() ,new ERROR(1).getError());
+            connectionsObject.send(protocol.getId() ,new ERROR(1).getError());
             return true;
         }
         //error 2- file cannot be read
         if(!Files.isReadable(filePath))
         {
-            connectionsObject.send(handler.getId() ,new ERROR(2).getError());
+            connectionsObject.send(protocol.getId() ,new ERROR(2).getError());
             return true;
         }
         //error 6- user not logged in
-        if(arg[1] != 7 && handler.getName()==null){
-            connectionsObject.send(handler.getId(), new ERROR(6).getError());
+        if(arg[1] != 7 && protocol.getUserName()==null){
+            connectionsObject.send(protocol.getId(), new ERROR(6).getError());
             return true;
         }
         return false;
@@ -45,9 +45,9 @@ public class RRQ implements Command<byte[]>
     }
 
     @Override
-    public void execute(byte[] arg, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject) 
+    public void execute(byte[] arg, TftpProtocol protocol, TftpConnections connectionsObject) 
     {       
-        if(!errorFound(arg,handler,connectionsObject)) //checking errors
+        if(!errorFound(arg,protocol,connectionsObject)) //checking errors
         {
             //extracting fileName
             final int INDENT=2;
@@ -66,9 +66,9 @@ public class RRQ implements Command<byte[]>
                 fis.read(dataByte);
             }catch(IOException e){}
             //creating new HoldsdataToSend object
-            HoldsDataToSend dataToSend=new HoldsDataToSend(connectionsObject, dataByte, handler);
+            HoldsDataToSend dataToSend=new HoldsDataToSend(connectionsObject, dataByte, protocol);
             //updating protocol to hold dataToSend object
-            ((TftpProtocol)handler.getProtocol()).setHoldsDataToSend(dataToSend);
+            protocol.setHoldsDataToSend(dataToSend);
             dataToSend.sendPacket(new byte[] {0,4,0,0});
             //sending ack
         //     byte[] blockNumber= new byte[] {0,0};

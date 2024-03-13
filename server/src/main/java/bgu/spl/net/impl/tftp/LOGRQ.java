@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import bgu.spl.net.srv.BlockingConnectionHandler;
 public class LOGRQ implements Command<byte[]> 
 {
-    private boolean errorFound(byte[] arg, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject)
+    private boolean errorFound(byte[] arg, TftpProtocol protocol, TftpConnections connectionsObject)
     {
         //error 7- user already logged in
         byte [] bytesUserName= new byte[arg.length-2];
@@ -18,16 +18,16 @@ public class LOGRQ implements Command<byte[]>
         }
         String userName = new String(bytesUserName, StandardCharsets.UTF_8);
         if(connectionsObject.isExistByUserName(userName)){// means this userName is already logged-in
-            connectionsObject.send(handler.getId(), new ERROR(7).getError());
+            connectionsObject.send(protocol.getId(), new ERROR(7).getError());
             return true;
         }
         return false;
     }   
 
     @Override
-    public void execute(byte[] arg, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject) 
+    public void execute(byte[] arg, TftpProtocol protocol, TftpConnections connectionsObject) 
     {
-        if(!errorFound(arg, handler, connectionsObject))
+        if(!errorFound(arg, protocol, connectionsObject))
         {
             byte [] bytesUserName= new byte[arg.length-2];
             final int INDENT = 2;
@@ -36,8 +36,8 @@ public class LOGRQ implements Command<byte[]>
                 bytesUserName[i]=arg[i+INDENT];
             }
             String userName = new String(bytesUserName, StandardCharsets.UTF_8);
-            handler.setName(userName);
-            connectionsObject.send(handler.getId(), new ACK(new byte[]{0,0}).getAck());
+            protocol.setUserName(userName);
+            connectionsObject.send(protocol.getId(), new ACK(new byte[]{0,0}).getAck());
         }
     }
 }

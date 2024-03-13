@@ -10,7 +10,7 @@ import bgu.spl.net.srv.BlockingConnectionHandler;
 
 public class DELRQ implements Command<byte[]> 
 {
-    public boolean errorFound(byte[] arg, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject)
+    public boolean errorFound(byte[] arg, TftpProtocol protocol, TftpConnections connectionsObject)
     {
         //error 1- File not found
         byte [] bytesFileName= new byte[arg.length-2];//Acording to Ori we get args without the last byte 
@@ -23,28 +23,28 @@ public class DELRQ implements Command<byte[]>
         Path filePath = Paths.get("server/Files/"+fileName);
         if(!Files.exists(filePath))
         {
-            connectionsObject.send(handler.getId() ,new ERROR(1).getError());
+            connectionsObject.send(protocol.getId() ,new ERROR(1).getError());
             return true;
         }
         //error 2- access violation 
         if(!Files.isWritable(filePath))
         {
-            connectionsObject.send(handler.getId(),new ERROR (2).getError());
+            connectionsObject.send(protocol.getId(),new ERROR (2).getError());
             return true;
         }
         // error 6- user not logged in
-        if(arg[1] != 7 && handler.getName()==null){ 
-            connectionsObject.send(handler.getId(), new ERROR(6).getError());
+        if(arg[1] != 7 && protocol.getUserName()==null){ 
+            connectionsObject.send(protocol.getId(), new ERROR(6).getError());
             return true;
             }
         return false;   
     }
 
     @Override
-    public void execute(byte[] arg, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject) 
+    public void execute(byte[] arg, TftpProtocol protocol, TftpConnections connectionsObject) 
     {
         
-        if(!errorFound(arg,handler,connectionsObject))
+        if(!errorFound(arg,protocol,connectionsObject))
         {
             byte [] bytesFileName= new byte[arg.length-2];//Acording to Ori we get args without the last byte 
             final int INDENT = 2;
@@ -58,7 +58,7 @@ public class DELRQ implements Command<byte[]>
                 Path filePath = Paths.get("server/Files/"+fileName);
                 Files.delete(filePath); 
                 
-                connectionsObject.send(handler.getId(),new ACK(new byte[]{0,0}).getAck());
+                connectionsObject.send(protocol.getId(),new ACK(new byte[]{0,0}).getAck());
                 
                 //starting broadcast
                 byte [] bcastMsg= new BCAST(bytesFileName, (byte)0x00).getBcastMsg();
@@ -67,12 +67,12 @@ public class DELRQ implements Command<byte[]>
                 for(int i=0; i<connectionsHash.size(); i++)
                 {
                     BlockingConnectionHandler <byte []> ch=copyConnectionsHash.get(i);
-                    if(ch.getName()!=null) //means this CH is logged in
+                    TftpProtocol protocolCh= (TftpProtocol)ch.getProtocol();
+                    if(protocolCh.getUserName()!=null) //means this CH is logged in
                     {
-                        int id=ch.getId();
+                        int id=protocolCh.getId();
                         connectionsObject.send(id,bcastMsg);
                     }
-                    TftpProtocol protocol=(TftpProtocol)(ch.getProtocol());
 
                     if(protocol.getFileToWritePath()!=null && protocol.getFileToWritePath()=="server/Files/"+fileName) 
                     {
@@ -80,7 +80,7 @@ public class DELRQ implements Command<byte[]>
                     }
                 }
                 //finishing broadCast
-            } catch(IOException e){connectionsObject.send(handler.getId() ,new ERROR(1).getError());}
+            } catch(IOException e){connectionsObject.send(protocol.getId() ,new ERROR(1).getError());}
         }
     }   
 }

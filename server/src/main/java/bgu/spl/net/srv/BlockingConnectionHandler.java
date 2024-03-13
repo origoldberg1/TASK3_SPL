@@ -18,10 +18,9 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     private BufferedInputStream in;
     private BufferedOutputStream out;
     private volatile boolean connected = true;
-    static volatile int connectionCounter = 0; //TODO: move it to protocol?
-    private volatile int id; //TODO: move it to protocol? 
-    private volatile String userName; //TODO: move it to protocol?
-    // private volatile String fileToWritePath; //we add it
+    static volatile int connectionCounter = 0; 
+    private volatile int id;
+
 
     public BlockingConnectionHandler(Socket sock, Connections<T> connections, MessageEncoderDecoder<T> reader, MessagingProtocol<T> protocol) {
         this.sock = sock;
@@ -29,7 +28,6 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
         this.encdec = reader;
         this.protocol = protocol;
         this.id = connectionCounter ++ ; 
-        this.userName=null; //we add it
         this.connections.connect(id, this);
 
     }
@@ -37,7 +35,7 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     @Override
     public void run() {
         try (Socket sock = this.sock) {
-            this.protocol.start(id, connections, this); //just for automatic closing
+            this.protocol.start(id, connections); //just for automatic closing
             int read;
 
             in = new BufferedInputStream(sock.getInputStream());
@@ -77,23 +75,6 @@ public class BlockingConnectionHandler<T> implements Runnable, ConnectionHandler
     public Connections<T> getConnectionsObject(){ //we add this method
         return connections;
     }
-
-    public int id(){ //we add this method
-        return id;
-    }
-
-    public String getName(){ //we add this method
-        return this.userName;
-    }
-
-    public String setName(String userName){ //we add this method
-        return this.userName=userName;
-    }
-
-    public int getId(){ //we add this method
-        return this.id;
-    }
-
     public void disconnect(){
         connected=false;
     }

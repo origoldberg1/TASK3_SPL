@@ -11,26 +11,26 @@ public class HoldsDataToSend
     private byte [] dataToSend;
     private TftpConnections connectionsObj;
     private boolean sendEmptyPacket;
-    private BlockingConnectionHandler handler;
+    private TftpProtocol protocol;
     private final int PACKET_SIZE=512;
 
     
     public boolean errorFound(byte[] arg)
     {
         // error 6- user not logged in
-        if(arg[1] != 7 && handler.getName()==null){ 
-            connectionsObj.send(handler.getId(), new ERROR(6).getError());
+        if(arg[1] != 7 && protocol.getUserName()==null){ 
+            connectionsObj.send(protocol.getId(), new ERROR(6).getError());
             return true;
         }
         return false;   
     }
 
-    public HoldsDataToSend(TftpConnections connectionsObj,byte[] dataToSend, BlockingConnectionHandler handler)
+    public HoldsDataToSend(TftpConnections connectionsObj,byte[] dataToSend, TftpProtocol protocol)
     {
        this.connectionsObj=connectionsObj;
        this.dataToSend=dataToSend;
        sendEmptyPacket=false;
-       this.handler=handler;  
+       this.protocol=protocol;  
        this.block = 1;
     }
 
@@ -73,7 +73,7 @@ public class HoldsDataToSend
                 }
                 block++;
                 packetArr=Util.convertListToArr(byteList);
-                connectionsObj.send(handler.getId(), packetArr); 
+                connectionsObj.send(protocol.getId(), packetArr); 
             }      
         }
     }
@@ -92,7 +92,7 @@ public class HoldsDataToSend
     {
         byte [] blockField=Util.intToTwoByte(block);
         byte [] emptyPacket= new byte[] {0,0,0,0,blockField[0], blockField[1]};
-        connectionsObj.send(handler.getId(), emptyPacket); 
+        connectionsObj.send(protocol.getId(), emptyPacket); 
     }
 }
 

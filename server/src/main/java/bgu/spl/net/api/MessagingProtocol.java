@@ -4,7 +4,7 @@ import bgu.spl.net.srv.ConnectionHandler;
 import bgu.spl.net.srv.Connections;
 public interface MessagingProtocol<T> {
  
-    void start(int connectionId, Connections<T> connections, ConnectionHandler<T> connectionHandler);
+    void start(int connectionId, Connections<T> connections);
 
     /**
      * process the given message 

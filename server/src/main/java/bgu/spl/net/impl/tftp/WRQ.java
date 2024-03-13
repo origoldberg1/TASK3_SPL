@@ -11,8 +11,8 @@ import bgu.spl.net.srv.BlockingConnectionHandler;
 
 public class WRQ implements Command<byte[]> 
 {
-    private static final String TftpProtocol = null;
-    private boolean errorFound(byte[] arg, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject)
+    // private static final String TftpProtocol = null;
+    private boolean errorFound(byte[] arg,TftpProtocol protocol, TftpConnections connectionsObject)
     {
         byte [] bytesFileName= new byte[arg.length-2];//Acording to Ori we get args without the last byte 
         final int INDENT = 2;
@@ -25,21 +25,21 @@ public class WRQ implements Command<byte[]>
         //error 5- file already exists
         if(Files.exists(filePath))
         {
-            connectionsObject.send(handler.getId() ,new ERROR(5).getError());
+            connectionsObject.send(protocol.getId() ,new ERROR(5).getError());
             return true;
         }
         //error 6- user not logged in
-        if(arg[1] != 7 && handler.getName()==null){
-            connectionsObject.send(handler.getId(), new ERROR(6).getError());
+        if(arg[1] != 7 && protocol.getUserName()==null){
+            connectionsObject.send(protocol.getId(), new ERROR(6).getError());
             return true;
         }
         return false;
 
     }
     @Override
-    public void execute(byte[] arg, BlockingConnectionHandler <byte []> handler, TftpConnections connectionsObject) 
+    public void execute(byte[] arg, TftpProtocol protocol, TftpConnections connectionsObject) 
     {
-        if(!errorFound(arg, handler, connectionsObject))
+        if(!errorFound(arg, protocol, connectionsObject))
         {
             //extracting fileName
             byte [] bytesFileName= new byte[arg.length-2];//According to ori we get arg without the last byte 
@@ -54,7 +54,7 @@ public class WRQ implements Command<byte[]>
                 file.createNewFile();
                 //updating protocol there is a path to write
                 HoldsDataToWrite holdsDataTowrite= new HoldsDataToWrite("server/Files/"+fileName, bytesFileName);
-                ((TftpProtocol)(handler.getProtocol())).setDataToWrite(holdsDataTowrite);
+                protocol.setDataToWrite(holdsDataTowrite);
                 // //starting broadcast
                 // BCAST bcast = new BCAST(bytesFileName, (byte)0x01);
                 // byte [] bcastMsg= bcast.getBcastMsg();
@@ -70,8 +70,8 @@ public class WRQ implements Command<byte[]>
                 // }
                 // //finishing broadcast
                 byte [] ackMsg=new ACK(new byte[]{0,0}).getAck();
-                connectionsObject.send(handler.getId(), ackMsg);
-            }catch(IOException e){connectionsObject.send(handler.getId(), new ERROR(5).getError());}  
+                connectionsObject.send(protocol.getId(), ackMsg);
+            }catch(IOException e){connectionsObject.send(protocol.getId(), new ERROR(5).getError());}  
         }
     }
 }

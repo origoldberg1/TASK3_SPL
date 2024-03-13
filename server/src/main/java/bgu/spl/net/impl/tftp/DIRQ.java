@@ -13,20 +13,20 @@ import java.util.stream.Stream;
 import bgu.spl.net.srv.BlockingConnectionHandler;
 
 public class DIRQ implements Command<byte[]> {
-     private boolean errorFound(byte[] arg, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject)
+     private boolean errorFound(byte[] arg, TftpProtocol protocol, TftpConnections connectionsObject)
     {
         //error 6- user not logged in
-        if(arg[1] != 7 && handler.getName()==null){
-            connectionsObject.send(handler.getId(), new ERROR(6).getError());
+        if(arg[1] != 7 && protocol.getUserName()==null){
+            connectionsObject.send(protocol.getId(), new ERROR(6).getError());
             return true;
         }
         return false;
     }
 
     @Override
-    public void execute(byte[] arg, BlockingConnectionHandler <byte[]> handler, TftpConnections connectionsObject) 
+    public void execute(byte[] arg, TftpProtocol protocol, TftpConnections connectionsObject) 
     {
-        if(!errorFound(arg, handler, connectionsObject))
+        if(!errorFound(arg, protocol, connectionsObject))
         {
             File folder = new File("server/Files");
             // String stringPath = "server/Files";
@@ -63,8 +63,8 @@ public class DIRQ implements Command<byte[]> {
             //     i++;
             // }
             //creating the data to send
-            HoldsDataToSend dataToSend= new HoldsDataToSend(connectionsObject, data, handler);
-            ((TftpProtocol)handler.getProtocol()).setHoldsDataToSend(dataToSend);
+            HoldsDataToSend dataToSend= new HoldsDataToSend(connectionsObject, data, protocol);
+            protocol.setHoldsDataToSend(dataToSend);
             dataToSend.sendPacket(new byte[] {0,4,0,0});
 
         }

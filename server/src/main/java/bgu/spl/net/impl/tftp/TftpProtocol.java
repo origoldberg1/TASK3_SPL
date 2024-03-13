@@ -10,7 +10,8 @@ public class TftpProtocol implements BidiMessagingProtocol <byte[]>  {
     private TftpConnections connectionsObj;
     private volatile boolean shouldTerminate=false;  
     private HoldsDataToSend dataToSend;
-    private int connectionId;
+    private int id;
+    private volatile String userName;
     private HoldsDataToWrite dataToWrite;
     
     public HoldsDataToSend packetToSend() //we add that
@@ -33,16 +34,17 @@ public class TftpProtocol implements BidiMessagingProtocol <byte[]>  {
     }
     
     @Override
-    public void start(int connectionId, Connections <byte[]> connections, ConnectionHandler <byte[]>  connectionHandler) {
+    public void start(int id, Connections <byte[]> connections) {
         // TODO implement this
-        this.handler = (BlockingConnectionHandler<byte[]>) connectionHandler;
         this.connectionsObj= (TftpConnections) connections;
-        this.connectionId=connectionId;
+        this.id=id;
+        this.userName=null;
         this.dataToSend=null;
-        //System.out.println("start");
+        this.dataToWrite=null;
         dataToWrite=null;
         //throw new UnsupportedOperationException("Unimplemented method 'start'");
     }
+
 
     @Override
     public void process(byte[] message) 
@@ -53,15 +55,15 @@ public class TftpProtocol implements BidiMessagingProtocol <byte[]>  {
         switch (message[1])
         {
             case 1:
-                new RRQ().execute(message, handler, connectionsObj);
+                new RRQ().execute(message, this, connectionsObj);
                 break;
             case 2:
-                new WRQ().execute(message, handler, connectionsObj);
+                new WRQ().execute(message, this, connectionsObj);
                 //System.out.println("2");
                 break;
             case 3:
                 if(dataToWrite==null){break;};
-                dataToWrite.execute(message, handler, connectionsObj);   
+                dataToWrite.execute(message, this, connectionsObj);   
                 break;
             case 4:
                 System.out.println("ACK " + Util.twoByteToInt(new byte[]{message[2], message[3]}));
@@ -69,19 +71,19 @@ public class TftpProtocol implements BidiMessagingProtocol <byte[]>  {
                 dataToSend.sendPacket(message); 
                 break;                
             case 6:
-                new DIRQ().execute(message, handler, connectionsObj);
+                new DIRQ().execute(message, this, connectionsObj);
                 break;
             case 7:
-                new LOGRQ().execute(message, handler, connectionsObj);
+                new LOGRQ().execute(message, this, connectionsObj);
                 break;
             case 8:
-                new DELRQ().execute(message, handler, connectionsObj);
+                new DELRQ().execute(message, this, connectionsObj);
                 break;
             case 10:
-                new DISC().execute(message, handler, connectionsObj);
+                new DISC().execute(message, this, connectionsObj);
                 break;
             default:
-            connectionsObj.send(handler.getId(),new ERROR (4).getError());
+            connectionsObj.send(getId(),new ERROR (4).getError());
         }
     } 
     
@@ -92,6 +94,29 @@ public class TftpProtocol implements BidiMessagingProtocol <byte[]>  {
         //throw new UnsupportedOperationException("Unimplemented method 'shouldTerminate'");
     }
 
+    //getters 
+    public int getId()
+    {
+        return id;
+    }
+
+    public String getUserName()
+    {
+        return userName;
+    }
+
+    public HoldsDataToSend getHoldsDataToSend()
+    {
+        return dataToSend;
+    }
+
+    public HoldsDataToWrite getHoldsDataToWrite()
+    {
+        return dataToWrite;
+    }
+
+    //setters
+
     public void setShouldTerminate()
     {
         shouldTerminate=true;
@@ -101,5 +126,17 @@ public class TftpProtocol implements BidiMessagingProtocol <byte[]>  {
     {
         this.dataToSend=dataToSend;
     }
+
+    public void setHoldsDataToWrite(HoldsDataToWrite dataToWrite)
+    {
+        this.dataToWrite=dataToWrite;
+    }
+
+    public void setUserName(String userName)
+    {
+        this.userName=userName;
+    }
+
+
 
 }

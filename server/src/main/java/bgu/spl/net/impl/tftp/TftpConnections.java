@@ -37,7 +37,8 @@ public class TftpConnections implements Connections<byte[]>{
 
     public synchronized boolean isExistByUserName(String userName){ //we add this method in order to check if this userName is already connected
         for(Map.Entry<Integer, BlockingConnectionHandler<byte[]>> ch: connections.entrySet()){
-            if(ch.getValue().getName() != null &&ch.getValue().getName().equals(userName))
+            TftpProtocol protocol=(TftpProtocol)ch.getValue().getProtocol();
+            if(protocol.getUserName() != null &&protocol.getUserName().equals(userName))
             {
                   return true;                
             }
