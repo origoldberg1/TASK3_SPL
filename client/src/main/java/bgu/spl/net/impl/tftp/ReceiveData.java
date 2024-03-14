@@ -68,7 +68,9 @@ public class ReceiveData {
     }
 
     public void deleteFile() throws IOException {
-        Util.deleteFile(Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName));
+    //    Util.deleteFile(Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName));
+        Util.deleteFile( "./" +fileName);
+    
     }
 
     private void printDIRQData(){

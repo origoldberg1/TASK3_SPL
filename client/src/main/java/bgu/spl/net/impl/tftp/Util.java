@@ -129,14 +129,20 @@ public class Util {
     }
 
     public static void writeFile(String fileName, byte[] bytes) throws FileNotFoundException, IOException {
-        try (FileOutputStream fos = new FileOutputStream(Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName).toString())) {
-            fos.write(bytes);
+        //try (FileOutputStream fos = new FileOutputStream(Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName).toString())) {
+        try (FileOutputStream fos = new FileOutputStream("./" + fileName)) {
+                fos.write(bytes);
             fos.close(); // There is no more need for this line since you had created the instance of "fos" inside the try. And this will automatically close the OutputStream
         }
     }
 
-    public static void deleteFile(Path fileFullPath) throws IOException{
-        Files.delete(fileFullPath);
+    // public static void deleteFile(Path fileFullPath) throws IOException{
+    //     Files.delete(fileFullPath);
+    // }
+
+    public static void deleteFile(String fileFullPath){
+        File toDelete = new File(fileFullPath);
+        toDelete.delete();
     }
 
     public static String[] convertDIRQDataToStringArr(byte[] msg){

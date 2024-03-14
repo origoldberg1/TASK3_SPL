@@ -21,7 +21,8 @@ public class SendData {
     public SendData(String fileName, OutputStream outputStream){
         this.fileName = fileName;
         try {
-            fileBytes = Util.readFile(Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName).toString());
+            //fileBytes = Util.readFile(Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName).toString());
+            fileBytes = Util.readFile("./" + fileName);
         } catch (IOException e) {}
         this.outputStream = outputStream;
     }

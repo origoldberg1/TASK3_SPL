@@ -14,19 +14,19 @@ enum STATE{
 }
 
 public class CurrentCommand {
-    private Path filePath;
+    //private Path filePath;
     private STATE state;
     private SendData sendData;
     private ReceiveData receiveData;
     
 
-    public synchronized Path getFilePath() {
-        return filePath;
-    }
+    // public synchronized Path getFilePath() {
+    //     return filePath;
+    // }
     
-    public synchronized void setFilePath(Path filePath) {
-        this.filePath = filePath;
-    }
+    // public synchronized void setFilePath(Path filePath) {
+    //     this.filePath = filePath;
+    // }
     
     public synchronized STATE getState() {
         return state;
@@ -53,7 +53,7 @@ public class CurrentCommand {
     }
 
     public synchronized void resetFields(){
-        filePath = null;
+    //    filePath = null;
         state = STATE.Unoccupied;    
         sendData = null;
         receiveData = null;   

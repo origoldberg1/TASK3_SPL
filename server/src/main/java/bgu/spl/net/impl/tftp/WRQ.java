@@ -21,9 +21,12 @@ public class WRQ implements Command<byte[]>
             bytesFileName[i]=arg[i+INDENT];
         }
         String fileName = new String(bytesFileName, StandardCharsets.UTF_8);
-        Path filePath = Paths.get("server/Files/"+fileName);
+        //Path filePath = Paths.get("server/Files/"+fileName);
+        String filePath = "server/Files/"+fileName;
+        File file = new File(filePath);
         //error 5- file already exists
-        if(Files.exists(filePath))
+        //if(Files.exists(filePath))
+        if(file.exists())
         {
             connectionsObject.send(protocol.getId() ,new ERROR(5).getError());
             return true;

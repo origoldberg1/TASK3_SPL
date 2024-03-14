@@ -21,15 +21,15 @@ public class WRQ implements Command{
 
     @Override
     public void execute() {
-        //Path filePath = Paths.get(System.getProperty("user.dir")).resolve("client").resolve(getFileName(userInput));
-        Path filePath = Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName);
-        File file = new File(filePath.toString());
+        //Path filePath = Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName);
+        //File file = new File(filePath.toString());
+        File file = new File("./" + fileName);
         if(!file.exists()){ //file already exists
             System.out.println("file does not exist");
             currentCommand.resetFields();
             return;
         }
-        currentCommand.setFilePath(filePath);
+    //    currentCommand.setFilePath(filePath);
         currentCommand.setState(STATE.WRQ);
         currentCommand.setSendData(new SendData(fileName, outputStream));
         byte[] fileNameBytes = fileName.getBytes();
