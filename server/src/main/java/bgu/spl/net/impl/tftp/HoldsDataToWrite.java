@@ -1,11 +1,7 @@
 package bgu.spl.net.impl.tftp;
 import bgu.spl.net.srv.BlockingConnectionHandler;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -91,7 +87,6 @@ public class HoldsDataToWrite implements Command<byte[]> {
 
     private void sendBroadcast(byte[] packet, TftpProtocol protocol, TftpConnections connectionsObject)
     {
-        //starting broadcast
         ConcurrentHashMap <Integer, BlockingConnectionHandler<byte[]>> connectionsHash =connectionsObject.getCopyHashMap();                
         for(Map.Entry<Integer, BlockingConnectionHandler<byte[]>> entry : connectionsHash.entrySet())
         {
@@ -102,8 +97,6 @@ public class HoldsDataToWrite implements Command<byte[]> {
                 connectionsObject.send(id,this.bcastMsg);
             }
         }
-        //finishing broadcast
-        
     }
 
 }

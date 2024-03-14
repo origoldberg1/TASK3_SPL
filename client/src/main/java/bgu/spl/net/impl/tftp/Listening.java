@@ -128,8 +128,9 @@ public class Listening implements Runnable{
     public void handleDIRQ(byte[] nextMessage, int opcode){
         switch (opcode) {
             case DATA:
-                new ACK(outputStream, nextMessage).execute();;
+                new ACK(outputStream, nextMessage).execute();
                 if(!currentCommand.getReceiveData().processPacket(nextMessage)){
+                    System.out.println("before reseFields");
                     currentCommand.resetFields();
                 }
                 break;

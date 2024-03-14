@@ -23,7 +23,7 @@ public class RRQ implements Command<byte[]>
             bytesFileName[i]=arg[i+INDENT];
         }
         String fileName = new String(bytesFileName, StandardCharsets.UTF_8);
-        Path filePath = Paths.get("server/Files/"+fileName);
+        Path filePath = Paths.get("Files/"+fileName);
         if(!Files.exists(filePath))
         {
             connectionsObject.send(protocol.getId() ,new ERROR(1).getError());
@@ -58,9 +58,9 @@ public class RRQ implements Command<byte[]>
             String fileName = new String(bytesFileName, StandardCharsets.UTF_8);
             //reading file 
             byte [] dataByte=new byte[0];  
-            try(FileInputStream fis = new FileInputStream("server/Files/" + fileName)){
+            try(FileInputStream fis = new FileInputStream("Files/" + fileName)){
                 //extracting file size (in bytes)
-                long fileSize= new File("server/Files/" + fileName).length();
+                long fileSize= new File("Files/" + fileName).length();
                 //reads all data to buffer
                 dataByte = new byte[(int) fileSize];
                 fis.read(dataByte);

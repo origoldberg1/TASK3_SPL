@@ -129,7 +129,8 @@ public class Util {
     }
 
     public static void writeFile(String fileName, byte[] bytes) throws FileNotFoundException, IOException {
-        try (FileOutputStream fos = new FileOutputStream(Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName).toString())) {
+        //try (FileOutputStream fos = new FileOutputStream(fileName)) {
+            try (FileOutputStream fos = new FileOutputStream(Paths.get(System.getProperty("user.dir")).resolve(fileName).toString())) {
             fos.write(bytes);
             fos.close(); // There is no more need for this line since you had created the instance of "fos" inside the try. And this will automatically close the OutputStream
         }

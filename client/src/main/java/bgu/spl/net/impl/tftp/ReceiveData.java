@@ -44,6 +44,7 @@ public class ReceiveData {
             }
             else{
                 printDIRQData();
+                return false;
             }
         }
         blockNumber ++;
@@ -68,7 +69,7 @@ public class ReceiveData {
     }
 
     public void deleteFile() throws IOException {
-        Util.deleteFile(Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName));
+        Util.deleteFile(Paths.get(System.getProperty("user.dir")).resolve(fileName));
     }
 
     private void printDIRQData(){

@@ -20,7 +20,7 @@ public class DELRQ implements Command<byte[]>
             bytesFileName[i]=arg[i+INDENT];
         }
         String fileName = new String(bytesFileName, StandardCharsets.UTF_8);
-        Path filePath = Paths.get("server/Files/"+fileName);
+        Path filePath = Paths.get("Files/"+fileName);
         if(!Files.exists(filePath))
         {
             connectionsObject.send(protocol.getId() ,new ERROR(1).getError());
@@ -55,7 +55,7 @@ public class DELRQ implements Command<byte[]>
             String fileName = new String(bytesFileName, StandardCharsets.UTF_8);
             try{
                 //delete the file
-                Path filePath = Paths.get("server/Files/"+fileName);
+                Path filePath = Paths.get("Files/"+fileName);
                 Files.delete(filePath); 
                 
                 connectionsObject.send(protocol.getId(),new ACK(new byte[]{0,0}).getAck());
@@ -74,7 +74,7 @@ public class DELRQ implements Command<byte[]>
                         connectionsObject.send(id,bcastMsg);
                     }
 
-                    if(protocol.getFileToWritePath()!=null && protocol.getFileToWritePath()=="server/Files/"+fileName) 
+                    if(protocol.getFileToWritePath()!=null && protocol.getFileToWritePath()=="Files/"+fileName) 
                     {
                         protocol.setDataToWrite(null);
                     }

@@ -21,7 +21,9 @@ public class WRQ implements Command<byte[]>
             bytesFileName[i]=arg[i+INDENT];
         }
         String fileName = new String(bytesFileName, StandardCharsets.UTF_8);
-        Path filePath = Paths.get("server/Files/"+fileName);
+        Path filePath = Paths.get("Files/"+fileName);
+        System.out.println(filePath.toString());
+        System.out.println(filePath.toAbsolutePath().toString());
         //error 5- file already exists
         if(Files.exists(filePath))
         {
@@ -49,11 +51,11 @@ public class WRQ implements Command<byte[]>
             }
             String fileName = new String(bytesFileName, StandardCharsets.UTF_8);              
             //trying to create the file
-            File file = new File("server/Files/"+fileName);
+            File file = new File("Files/"+fileName);
             try {
                 file.createNewFile();
                 //updating protocol there is a path to write
-                HoldsDataToWrite holdsDataTowrite= new HoldsDataToWrite("server/Files/"+fileName, bytesFileName);
+                HoldsDataToWrite holdsDataTowrite= new HoldsDataToWrite("Files/"+fileName, bytesFileName);
                 protocol.setDataToWrite(holdsDataTowrite);
                 // //starting broadcast
                 // BCAST bcast = new BCAST(bytesFileName, (byte)0x01);

@@ -28,7 +28,7 @@ public class DIRQ implements Command<byte[]> {
     {
         if(!errorFound(arg, protocol, connectionsObject))
         {
-            File folder = new File("server/Files");
+            File folder = new File("Files");
             // String stringPath = "server/Files";
             // Path dir= Paths.get(stringPath);
             // List<Path> files = Files.list(dir).toList();

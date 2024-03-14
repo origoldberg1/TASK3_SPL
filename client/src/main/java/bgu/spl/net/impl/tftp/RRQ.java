@@ -19,7 +19,7 @@ public class RRQ implements Command{
     }
     @Override
     public void execute() {
-        File file = new File(Paths.get(System.getProperty("user.dir")).resolve("client").resolve(fileName).toString());
+        File file = new File(Paths.get(System.getProperty("user.dir")).resolve(fileName).toString());
         if(file.exists()){ //file already exists
             System.out.println("file already exists");
             currentCommand.resetFields();

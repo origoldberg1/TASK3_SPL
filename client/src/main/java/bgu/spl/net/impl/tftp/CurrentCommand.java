@@ -56,7 +56,9 @@ public class CurrentCommand {
         filePath = null;
         state = STATE.Unoccupied;    
         sendData = null;
-        receiveData = null;   
+        receiveData = null;
+        System.out.println("end reseFields");
+   
     }
 
     public synchronized void deleteRRQFile() throws IOException {
