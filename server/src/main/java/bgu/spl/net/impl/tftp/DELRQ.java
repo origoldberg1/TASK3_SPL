@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import bgu.spl.net.srv.BlockingConnectionHandler;
@@ -62,15 +63,13 @@ public class DELRQ implements Command<byte[]>
                 
                 //starting broadcast
                 byte [] bcastMsg= new BCAST(bytesFileName, (byte)0x00).getBcastMsg();
-                ConcurrentHashMap <Integer, BlockingConnectionHandler<byte[]>> connectionsHash =connectionsObject.getConnectionsHash();
-                ConcurrentHashMap<Integer, BlockingConnectionHandler<byte[]>> copyConnectionsHash = new ConcurrentHashMap<>(connectionsHash);
-                for(int i=0; i<connectionsHash.size(); i++)
+                ConcurrentHashMap <Integer, BlockingConnectionHandler<byte[]>> connectionsHash =connectionsObject.getCopyHashMap();                
+                for(Map.Entry<Integer, BlockingConnectionHandler<byte[]>> entry : connectionsHash.entrySet())
                 {
-                    BlockingConnectionHandler <byte []> ch=copyConnectionsHash.get(i);
-                    TftpProtocol protocolCh= (TftpProtocol)ch.getProtocol();
-                    if(protocolCh.getUserName()!=null) //means this CH is logged in
+                    TftpProtocol chProtocol=(TftpProtocol)entry.getValue().getProtocol();
+                    if(chProtocol.getUserName()!=null) //means this CH is logged in
                     {
-                        int id=protocolCh.getId();
+                        int id=chProtocol.getId();
                         connectionsObject.send(id,bcastMsg);
                     }
 

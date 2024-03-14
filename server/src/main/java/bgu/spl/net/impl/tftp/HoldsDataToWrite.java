@@ -91,7 +91,8 @@ public class HoldsDataToWrite implements Command<byte[]> {
         for(Map.Entry<Integer, BlockingConnectionHandler<byte[]>> entry : connectionsHash.entrySet())
         {
             TftpProtocol chProtocol=(TftpProtocol)entry.getValue().getProtocol();
-            if(protocol.getUserName()!=null) //means this CH is logged in
+            String userName=chProtocol.getUserName();
+            if(userName!=null) //means this CH is logged in
             {
                 int id=chProtocol.getId();
                 connectionsObject.send(id,this.bcastMsg);
